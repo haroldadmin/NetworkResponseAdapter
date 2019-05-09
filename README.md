@@ -89,7 +89,7 @@ allprojects {
 And then add the dependency in your gradle file:
 ```
 dependencies {
-  implementation 'com.github.haroldadmin:NetworkResponse-Retrofit-Call-Adapter-Coroutines:Tag'
+  implementation 'com.github.haroldadmin:NetworkResponse-Retrofit-Call-Adapter-Coroutines:v1.0.1'
 }
 ```
 
