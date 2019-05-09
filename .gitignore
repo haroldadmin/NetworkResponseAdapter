@@ -33,3 +33,7 @@ hs_err_pid*
 
 # VSCode
 .vscode
+
+# Kotlin Test files
+.kotlintest
+out/
