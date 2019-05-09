@@ -73,6 +73,26 @@ suspend fun getPerson() = repositoryScope.launch {
 Modelling errors as a part of your state is a recommended practice. This library helps you deal with scenarios where you can successfully recover from errors. Server and Connectivity errors can be easily dealt with.
 For any other types of unexpected errors, you probably want to crash your application so that you can take a look at what's going on.
 
+#### Installation
+
+Add the Jitpack repository to your list of repositories:
+
+```
+allprojects {
+  repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+  }
+}
+```
+
+And then add the dependency in your gradle file:
+```
+dependencies {
+  implementation 'com.github.haroldadmin:NetworkResponse-Retrofit-Call-Adapter-Coroutines:Tag'
+}
+```
+
 #### License
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
