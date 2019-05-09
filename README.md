@@ -1,4 +1,4 @@
-## Coroutines Network Response Adapter
+## Coroutines Network Response Call Adapter for Retrofit
 
 This library provides a Retrofit call adapter for wrapping your API responses in a `NetworkResponse` class using Coroutines.
 
