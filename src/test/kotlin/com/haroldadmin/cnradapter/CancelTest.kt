@@ -38,10 +38,9 @@ internal class CancelTest : DescribeSpec({
 
         context("Call with error") {
             val call = CompletableCall<String>()
-            val deferred = adapter.adapt(call)
             call.completeWithException(IOException())
 
-            it ("Should be cancelled") {
+            it("Should be cancelled") {
                 call.isCanceled shouldBe false
             }
         }
