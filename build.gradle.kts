@@ -1,6 +1,9 @@
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.3.31")
+    maven
 }
+
+group = "com.github.haroldadmin"
 
 repositories {
     jcenter()
