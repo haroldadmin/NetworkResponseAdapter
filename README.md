@@ -123,7 +123,7 @@ allprojects {
 And then add the dependency in your gradle file:
 ```groovy
 dependencies {
-  implementation 'com.github.haroldadmin:NetworkResponse-Retrofit-Call-Adapter-Coroutines:v1.0.1'
+  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0"
 }
 ```
 
