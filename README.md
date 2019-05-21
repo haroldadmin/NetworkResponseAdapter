@@ -1,5 +1,7 @@
-## Coroutines Network Response Call Adapter for Retrofit
+### NetworkResponse Retrofit adapter
+A call adapter that handles errors as a part of state
 
+---
 This library provides a Retrofit call adapter for wrapping your API responses in a `NetworkResponse` class using Coroutines.
 
 #### Network Response
@@ -18,9 +20,9 @@ The response type represents the Java/Kotlin representation of your API network 
 Suppose you have an API that returns the following response if the request is successful:
 
 *Successful Response*
-```
+```json
 {
-    "name": "John doe"
+    "name": "John doe",
     "age": 21
 }
 ```
@@ -28,7 +30,7 @@ Suppose you have an API that returns the following response if the request is su
 And here's the response when the request was unsuccessful:
 
 *Error Response*
-```
+```json
 {
     "message": "The requested person was not found"
 }
@@ -36,7 +38,7 @@ And here's the response when the request was unsuccessful:
 
 You can create two data classes to model the these responses:
 
-```
+```kotlin
 data class PersonResponse(val name: String, val age: Int)
 data class ErrorResponse(val message: String)
 ```
@@ -44,7 +46,7 @@ data class ErrorResponse(val message: String)
 You may then write your API service as:
 
 
-```
+```kotlin
 // APIService.kt
 
 @GET("<api-url>")
@@ -52,42 +54,74 @@ fun getPerson(): Deferred<NetworkResponse<PersonResponse, ErrorResponse>
 
 ```
 
-This can be consumed in the following way:
-
+Make sure to add this call adapter factory when building your Retrofit instance:
+```kotlin
+Retrofit.Builder()
+    .addCallAdapterFactory(CoroutinesNetworkResponseAdapterFactory())
+    .build()
 ```
+
+Then consume the API as follows:
+
+```kotlin
 // Repository.kt
 
-suspend fun getPerson() = repositoryScope.launch {
+suspend fun getPerson() {
     val person = apiService.getPerson().await()
     when (person) {
-        is NetworkResponse.Success -> // Handle Success
-        is NetworkResponse.ServerError -> // Handle Server Error
-        is NetworkResponse.NetworkError -> // Handle Network Error
+        is NetworkResponse.Success -> {
+            // Handle Success
+        }
+        is NetworkResponse.ServerError -> { 
+            // Handle Server Error 
+        }
+        is NetworkResponse.NetworkError -> {
+            // Handle Network Error
+        }
     }
 }
 ```
 
-*Note that since `NetworkResponse` is a sealed class, you do not need to specify an `else` case in the `when` expression.*
+You can also use the included utility function `executeWithRetry` to automatically retry your network requests if they result in `NetworkResponse.NetworkError`
+```kotlin
+suspend fun getPerson() {
+    val response = executeWithRetry(times = 5) {
+        apiService.getPerson.await()
+    }
+    
+    // Then handle the response
+}
+```
+---
 
 #### Why?
-Modelling errors as a part of your state is a recommended practice. This library helps you deal with scenarios where you can successfully recover from errors. Server and Connectivity errors can be easily dealt with.
-For any other types of unexpected errors, you probably want to crash your application so that you can take a look at what's going on.
+Modelling errors as a part of your state is a recommended practice. This library helps you deal with scenarios where you can successfully recover from errors. Server errors and Connectivity problems can be easily dealt with.
+For any other unexpected situation, you probably want to crash your application so that you can take a look at what's going on.
+
+The `NetworkResponse` adapter provides a much cleaner solution than Retrofit's built in `Call` type, because it models errors as a sealed class and does not force you to think in terms of callbacks.
+It is built on top of coroutines support, so asynchronous network requests become a lot easier too!
+
+The RxJava retrofit adapter treats non 2xx error codes as errors too, which seems silly. An error in an Rx stream should be something from which it is difficult to recover.
+This is not the best way to deal with errors from an API response, because they can contain meaningful information too. They should not be specifically dealt with in `onError` blocks.
+
+However, because a lot of things are treated as errors in the Rx Adapter, retrying becomes as easy as dropping the `retry()` operator in the middle of the stream.
+While the solution provided by this library is convenient as that, you can take a look at the `executeWithRetry` utility method.
+It is a higher order function which can retry your network requests if they fail.
 
 #### Installation
 
 Add the Jitpack repository to your list of repositories:
 
-```
+```groovy
 allprojects {
   repositories {
-    ...
     maven { url 'https://jitpack.io' }
   }
 }
 ```
 
 And then add the dependency in your gradle file:
-```
+```groovy
 dependencies {
   implementation 'com.github.haroldadmin:NetworkResponse-Retrofit-Call-Adapter-Coroutines:v1.0.1'
 }
