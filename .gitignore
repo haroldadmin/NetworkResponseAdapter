@@ -37,3 +37,6 @@ hs_err_pid*
 # Kotlin Test files
 .kotlintest
 out/
+
+# Gradle
+local.properties

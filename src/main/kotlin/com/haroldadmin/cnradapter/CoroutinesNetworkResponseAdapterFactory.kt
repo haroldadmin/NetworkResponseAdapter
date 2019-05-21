@@ -7,13 +7,20 @@ import java.lang.IllegalStateException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
+/**
+ * A Factory class to create instances of [CoroutinesNetworkResponseAdapter]
+ */
 class CoroutinesNetworkResponseAdapterFactory private constructor() : CallAdapter.Factory() {
+
     companion object {
         @JvmStatic
         @JvmName("create")
         operator fun invoke() = CoroutinesNetworkResponseAdapterFactory()
     }
 
+    /**
+     * Returns the Network Response call adapter if it is appropriate, or null otherwise
+     */
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
         val rawType = getRawType(returnType)
         if (Deferred::class.java != rawType) {

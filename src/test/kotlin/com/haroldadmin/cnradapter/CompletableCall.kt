@@ -7,13 +7,13 @@ import retrofit2.Response
 import java.io.InterruptedIOException
 import java.util.concurrent.CountDownLatch
 
-/**
- * As has been established several times now, Jake Wharton has written 95% of my app.
- */
 private val DUMMY_REQUEST = Request.Builder()
         .url("http://example.com")
         .build()
 
+/**
+ * Credits to Jake Wharton for this class
+ */
 class CompletableCall<T>(private val request: Request = DUMMY_REQUEST) : Call<T> {
     private val lock = Any()
     private var executed = false

@@ -7,6 +7,15 @@ import retrofit2.*
 import java.io.IOException
 import java.lang.reflect.Type
 
+/**
+ * A Retrofit converter to return objects wrapped in [NetworkResponse] class
+ *
+ * @param T The type of the successful response model
+ * @param U The type of the error response model
+ * @param successBodyType The type of the successful response model in [NetworkResponse]
+ * @param errorConverter The converter to extract error information from [ResponseBody]
+ * @constructor Creates a CoroutinesNetworkResponseAdapter
+ */
 internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
         private val successBodyType: Type,
         private val errorConverter: Converter<ResponseBody, U>
@@ -19,6 +28,12 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
      */
     override fun responseType(): Type = successBodyType
 
+    /**
+     * Returns an instance of [T] by modifying a [Call] object
+     *
+     * @param call The call object to be converted
+     * @return The T instance wrapped in a [NetworkResponse] class wrapped in [Deferred]
+     */
     override fun adapt(call: Call<T>): Deferred<NetworkResponse<T, U>> {
         val deferred = CompletableDeferred<NetworkResponse<T, U>>()
 
@@ -37,27 +52,24 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
                     is HttpException -> {
                         // Try to extract the error body
                         val error = throwable.response().errorBody()
+                        val responseCode = throwable.response().code()
+                        val headers = throwable.response().headers()
                         val errorBody = when {
                             error == null -> null // No error content available
                             error.contentLength() == 0L -> null // Error content is empty
-                            else -> {
+                            else -> try {
                                 // There is error content present, so we should try to extract it
-                                try {
-                                    // Try extraction
-                                    errorConverter.convert(error)
-                                } catch (e: Exception) {
-                                    // If unable to extract content, return with a general error and don't parse further
-                                    deferred.complete(
-                                            NetworkResponse.NetworkError(
-                                                    IOException("Couldn't deserialize error body: $error")
-                                            )
-                                    )
-                                    return
-                                }
+                                errorConverter.convert(error)
+                            } catch (e: Exception) {
+                                // If unable to extract content, return with a null body and don't parse further
+                                deferred.complete(
+                                        NetworkResponse.ServerError(null, responseCode, headers)
+                                )
+                                return
                             }
                         }
                         // If the error extraction was successful, add it to the deferred object
-                        deferred.complete(NetworkResponse.ServerError(errorBody, throwable.response().code()))
+                        deferred.complete(NetworkResponse.ServerError(errorBody, responseCode, headers))
                     }
 
                     else -> {
@@ -68,9 +80,12 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
             }
 
             override fun onResponse(call: Call<T>, response: Response<T>) {
-                response.body()?.let {
-                    deferred.complete(NetworkResponse.Success<T>(it))
-                } ?: deferred.complete(NetworkResponse.ServerError(null, response.code()))
+                val headers = response.headers()
+                val responseCode = response.code()
+                val body = response.body()
+                body?.let {
+                    deferred.complete(NetworkResponse.Success(it, headers))
+                } ?: deferred.complete(NetworkResponse.ServerError(null, responseCode))
             }
         })
 
