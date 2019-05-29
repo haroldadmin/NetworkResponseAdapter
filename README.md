@@ -92,6 +92,13 @@ suspend fun getPerson() {
     // Then handle the response
 }
 ```
+
+There's also an overloaded invoke operator on the NetworkResponse class so that its success body can be accessed directly.
+```kotlin
+val usersResponse = usersRepo.getUsers().await() // Returns users if response is successful, or null otherwise
+println(usersResponse() ?: "No users were found")
+```
+
 ---
 
 #### Why?
@@ -123,7 +130,7 @@ allprojects {
 And then add the dependency in your gradle file:
 ```groovy
 dependencies {
-  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0"
+  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0.1"
 }
 ```
 
