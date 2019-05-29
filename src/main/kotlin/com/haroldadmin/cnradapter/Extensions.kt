@@ -37,3 +37,19 @@ suspend inline fun <T: Any, U: Any> executeWithRetry(
     }
     return block() // last attempt
 }
+
+
+/**
+ * Overloaded invoke operator to get the successful body or null in NetworkResponse class
+ *
+ * @param T the success body type of [NetworkResponse]
+ * @param U the error body type of [NetworkResponse]
+ *
+ * Example:
+ * val usersResponse = executeWithRetry { getUsers() }
+ *
+ * println(usersResponse() ?: "No users found")
+ */
+operator fun <T: Any, U: Any> NetworkResponse<T, U>.invoke(): T? {
+    return if (this is NetworkResponse.Success) body else null
+}
