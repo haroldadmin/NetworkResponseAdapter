@@ -20,6 +20,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:3.14.1")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:3.14.1")
-    testImplementation ("com.google.guava:guava:26.0-jre")
+    testImplementation("com.google.guava:guava:26.0-jre")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
 }

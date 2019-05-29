@@ -17,8 +17,8 @@ import java.lang.reflect.Type
  * @constructor Creates a CoroutinesNetworkResponseAdapter
  */
 internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
-        private val successBodyType: Type,
-        private val errorConverter: Converter<ResponseBody, U>
+    private val successBodyType: Type,
+    private val errorConverter: Converter<ResponseBody, U>
 ) : CallAdapter<T, Deferred<NetworkResponse<T, U>>> {
 
     /**
@@ -85,7 +85,7 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
                 val body = response.body()
                 body?.let {
                     deferred.complete(NetworkResponse.Success(it, headers))
-                } ?: deferred.complete(NetworkResponse.ServerError(null, responseCode))
+                } ?: deferred.complete(NetworkResponse.ServerError(null, responseCode, headers))
             }
         })
 

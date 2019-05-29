@@ -60,7 +60,7 @@ class CompletableCall<T>(private val request: Request = DUMMY_REQUEST) : Call<T>
 
     override fun execute(): Response<T> {
         synchronized(lock) {
-            check(!executed) { "Already executed "}
+            check(!executed) { "Already executed " }
             executed = true
         }
         done.await()

@@ -59,5 +59,4 @@ internal class CancelTest : DescribeSpec({
             }
         }
     }
-
 })

@@ -16,7 +16,7 @@ private class MessageRepo {
     }
 }
 
-internal class InvokeOperatorTest: DescribeSpec({
+internal class InvokeOperatorTest : DescribeSpec({
 
     describe("Overloaded invoke operator") {
         val repo = MessageRepo()
@@ -24,7 +24,7 @@ internal class InvokeOperatorTest: DescribeSpec({
         context("Successful response") {
             val messageResponse = repo.getMessage().await()
 
-            it ("Should return the successful body") {
+            it("Should return the successful body") {
                 val response = messageResponse()
                 response shouldBe "Hello!"
             }
@@ -33,11 +33,10 @@ internal class InvokeOperatorTest: DescribeSpec({
         context("Error response") {
             val messageResponse = repo.getMessageError().await()
 
-            it ("Should return null") {
+            it("Should return null") {
                 val response = messageResponse()
                 response shouldBe null
             }
         }
     }
-
 })
