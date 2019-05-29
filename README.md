@@ -130,7 +130,7 @@ allprojects {
 And then add the dependency in your gradle file:
 ```groovy
 dependencies {
-  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0.1"
+  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0.2"
 }
 ```
 
