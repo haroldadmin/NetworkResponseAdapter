@@ -130,9 +130,11 @@ allprojects {
 And then add the dependency in your gradle file:
 ```groovy
 dependencies {
-  implementation "com.github.haroldadmin:CoroutinesNetworkResponseAdapter:2.0.2"
+  implementation "com.github.haroldadmin:NetworkResponseAdapter:(latest-version)"
 }
 ```
+
+[![Release](https://jitpack.io/v/haroldadmin/NetworkResponseAdapter.svg)](https://jitpack.io/#haroldadmin/NetworkResponseAdapter)
 
 #### License
 ```
