@@ -4,6 +4,8 @@ A call adapter that handles errors as a part of state
 ---
 This library provides a Retrofit call adapter for wrapping your API responses in a `NetworkResponse` class using Coroutines.
 
+*This library uses OkHttp 4, which requires Android API version 21+ and Java 8+*
+
 #### Network Response
 Network response is a Kotlin sealed class with the following three states:
 
