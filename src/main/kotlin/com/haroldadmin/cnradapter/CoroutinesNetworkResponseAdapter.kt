@@ -16,6 +16,9 @@ import java.lang.reflect.Type
  * @param errorConverter The converter to extract error information from [ResponseBody]
  * @constructor Creates a CoroutinesNetworkResponseAdapter
  */
+
+private const val UNKNOWN_ERROR_RESPONSE_CODE = 520
+
 internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
     private val successBodyType: Type,
     private val errorConverter: Converter<ResponseBody, U>
@@ -51,9 +54,9 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
 
                     is HttpException -> {
                         // Try to extract the error body
-                        val error = throwable.response().errorBody()
-                        val responseCode = throwable.response().code()
-                        val headers = throwable.response().headers()
+                        val error = throwable.response()?.errorBody()
+                        val responseCode = throwable.response()?.code() ?: UNKNOWN_ERROR_RESPONSE_CODE
+                        val headers = throwable.response()?.headers()
                         val errorBody = when {
                             error == null -> null // No error content available
                             error.contentLength() == 0L -> null // Error content is empty
