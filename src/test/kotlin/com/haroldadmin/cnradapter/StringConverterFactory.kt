@@ -1,7 +1,9 @@
 package com.haroldadmin.cnradapter
 
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -25,6 +27,6 @@ internal class StringConverterFactory : Converter.Factory() {
         methodAnnotations: Array<Annotation>?,
         retrofit: Retrofit?
     ): Converter<*, RequestBody> {
-        return Converter<String, RequestBody> { value -> RequestBody.create(MediaType.parse("text/plain"), value) }
+        return Converter<String, RequestBody> { value -> value.toRequestBody("text/plain".toMediaTypeOrNull()) }
     }
 }
