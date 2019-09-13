@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm").version("1.3.41")
+    id("org.jetbrains.kotlin.jvm").version("1.3.50")
     maven
 }
 
@@ -15,9 +15,9 @@ val test by tasks.getting(Test::class) {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC")
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
-    implementation("com.squareup.okhttp3:okhttp:4.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
+    implementation("com.squareup.retrofit2:retrofit:2.6.1")
+    implementation("com.squareup.okhttp3:okhttp:4.2.0")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")
     testImplementation("com.google.guava:guava:26.0-jre")
