@@ -52,14 +52,17 @@ You may then write your API service as:
 // APIService.kt
 
 @GET("<api-url>")
-fun getPerson(): Deferred<NetworkResponse<PersonResponse, ErrorResponse>
+fun getPerson(): Deferred<NetworkResponse<PersonResponse, ErrorResponse>>
 
+// or if you want to use Suspending functions
+@GET("<api-url>")
+suspend fun getPerson(): NetworkResponse<PersonResponse, ErrorResponse>>
 ```
 
 Make sure to add this call adapter factory when building your Retrofit instance:
 ```kotlin
 Retrofit.Builder()
-    .addCallAdapterFactory(CoroutinesNetworkResponseAdapterFactory())
+    .addCallAdapterFactory(NetworkResponseAdapterFactory())
     .build()
 ```
 
@@ -70,6 +73,9 @@ Then consume the API as follows:
 
 suspend fun getPerson() {
     val person = apiService.getPerson().await()
+    // or if you use suspending functions,
+    val person = runBlocking { apiService.getPerson() }
+
     when (person) {
         is NetworkResponse.Success -> {
             // Handle Success
@@ -91,14 +97,19 @@ suspend fun getPerson() {
         apiService.getPerson.await()
     }
     
+    // or with suspending functions
+    val response = executeWithRetry(times = 5) {
+        apiService.getPerson()
+    }
+
     // Then handle the response
 }
 ```
 
 There's also an overloaded invoke operator on the NetworkResponse class so that its success body can be accessed directly.
 ```kotlin
-val usersResponse = usersRepo.getUsers().await() // Returns users if response is successful, or null otherwise
-println(usersResponse() ?: "No users were found")
+val usersResponse = usersRepo.getUsers().await() 
+println(usersResponse() ?: "No users were found") // Returns users if response is successful, or null otherwise
 ```
 
 ---
