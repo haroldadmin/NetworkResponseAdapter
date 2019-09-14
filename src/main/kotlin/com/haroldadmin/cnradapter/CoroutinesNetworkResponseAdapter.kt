@@ -17,8 +17,14 @@ import java.lang.reflect.Type
  * @constructor Creates a CoroutinesNetworkResponseAdapter
  */
 
-private const val UNKNOWN_ERROR_RESPONSE_CODE = 520
-
+@Deprecated(
+        message = "This class should not be used anymore. Pick DeferredNetworkResponseAdapter or NetworkResponseAdapter based on your needs",
+        replaceWith = ReplaceWith(
+                expression = "DeferredNetworkResponseAdapter",
+                imports = ["com.haroldadmin.cnradapter.DeferredNetworkResponseAdapter"]
+        ),
+        level = DeprecationLevel.WARNING
+)
 internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
     private val successBodyType: Type,
     private val errorConverter: Converter<ResponseBody, U>
@@ -48,6 +54,7 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
 
         call.enqueue(object : Callback<T> {
             override fun onFailure(call: Call<T>, throwable: Throwable) {
+                // TODO Use ErrorExtraction methods here
                 when (throwable) {
 
                     is IOException -> deferred.complete(NetworkResponse.NetworkError(throwable))
