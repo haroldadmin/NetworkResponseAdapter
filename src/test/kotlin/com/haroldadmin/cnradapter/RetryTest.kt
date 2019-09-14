@@ -71,7 +71,7 @@ class ExtensionsTest : DescribeSpec() {
                 server.enqueue(MockResponse().setBody("Hi!"))
 
                 val response = executeWithRetry(times = 10) {
-                    runBlocking { service.getTextSuspend() }
+                    service.getTextSuspend()
                 }
 
                 it("Should end up with NetworkResponse.Success after 10 retries") {
