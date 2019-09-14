@@ -25,7 +25,7 @@ internal class DeferredTest : DescribeSpec() {
         retrofit = Retrofit.Builder()
                 .baseUrl(server.url("/"))
                 .addConverterFactory(StringConverterFactory())
-                .addCallAdapterFactory(CoroutinesNetworkResponseAdapterFactory())
+                .addCallAdapterFactory(NetworkResponseAdapterFactory())
                 .callbackExecutor(executor)
                 .build()
         service = retrofit.create(Service::class.java)
@@ -94,7 +94,7 @@ internal class DeferredTest : DescribeSpec() {
             }
 
             context("IO error") {
-                server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AFTER_REQUEST))
+                server.enqueue(MockResponse().apply { socketPolicy = SocketPolicy.DISCONNECT_AFTER_REQUEST })
 
                 it("Should be treated as NetworkResponse.NetworkError") {
                     val response = service.getText().await()

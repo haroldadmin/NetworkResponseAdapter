@@ -25,7 +25,7 @@ class ExtensionsTest : DescribeSpec() {
         retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .callbackExecutor(executor)
-            .addCallAdapterFactory(CoroutinesNetworkResponseAdapterFactory())
+            .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(StringConverterFactory())
             .build()
         service = retrofit.create(Service::class.java)
@@ -41,7 +41,8 @@ class ExtensionsTest : DescribeSpec() {
         describe("Execute with retry") {
 
             repeat(9) {
-                server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AFTER_REQUEST))
+                val mockResponse = MockResponse()
+                server.enqueue(mockResponse.apply { mockResponse.socketPolicy = SocketPolicy.DISCONNECT_AFTER_REQUEST })
             }
 
             server.enqueue(MockResponse().setBody("Hi!"))

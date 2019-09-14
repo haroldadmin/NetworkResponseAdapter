@@ -5,6 +5,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
 import kotlinx.coroutines.Deferred
 import okhttp3.mockwebserver.MockWebServer
+import retrofit2.Call
 import retrofit2.Retrofit
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -12,14 +13,14 @@ import java.util.concurrent.Executors
 internal class FactoryTest : DescribeSpec() {
 
     private lateinit var mockWebServer: MockWebServer
-    private lateinit var callAdapterFactory: CoroutinesNetworkResponseAdapterFactory
+    private lateinit var callAdapterFactory: NetworkResponseAdapterFactory
     private lateinit var retrofit: Retrofit
     private lateinit var executor: ExecutorService
 
     override fun beforeSpec(spec: Spec) {
         super.beforeSpec(spec)
         mockWebServer = MockWebServer()
-        callAdapterFactory = CoroutinesNetworkResponseAdapterFactory()
+        callAdapterFactory = NetworkResponseAdapterFactory()
         executor = Executors.newSingleThreadExecutor()
         retrofit = Retrofit.Builder()
                 .baseUrl(mockWebServer.url("/"))
@@ -45,9 +46,15 @@ internal class FactoryTest : DescribeSpec() {
                     callAdapterFactory.get(bodyClass, emptyArray(), retrofit) shouldBe null
                 }
             }
-            context("Request type if Deferred<NetworkResponse>") {
+            context("Request type is Deferred<NetworkResponse>") {
                 val bodyClass = typeOf<Deferred<NetworkResponse<String, String>>>()
                 it("Should return correct type") {
+                    callAdapterFactory.get(bodyClass, emptyArray(), retrofit)!!.responseType() shouldBe String::class.java
+                }
+            }
+            context("Request type is NetworkResponse") {
+                val bodyClass = typeOf<Call<NetworkResponse<String, String>>>()
+                it("should return the correct type") {
                     callAdapterFactory.get(bodyClass, emptyArray(), retrofit)!!.responseType() shouldBe String::class.java
                 }
             }

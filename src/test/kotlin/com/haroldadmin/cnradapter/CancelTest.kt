@@ -11,7 +11,7 @@ import java.io.IOException
 internal class CancelTest : DescribeSpec({
 
     val mockWebServer = MockWebServer()
-    val factory = CoroutinesNetworkResponseAdapterFactory()
+    val factory = NetworkResponseAdapterFactory()
     val retrofit = Retrofit.Builder()
             .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(StringConverterFactory())
