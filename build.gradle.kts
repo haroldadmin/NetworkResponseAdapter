@@ -13,6 +13,10 @@ val test by tasks.getting(Test::class) {
     useJUnitPlatform { }
 }
 
+tasks.wrapper {
+    gradleVersion = "5.6.2"
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
