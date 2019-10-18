@@ -13,7 +13,7 @@ import retrofit2.*
 import java.io.IOException
 
 internal class NetworkResponseCallTest {
-    private val errorConverter = Converter<ResponseBody, String> { it.toString() }
+    private val errorConverter = Converter<ResponseBody, String> { it.string() }
     private val backingCall = CompletableCall<String>()
     private val networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter)
 
@@ -73,6 +73,28 @@ internal class NetworkResponseCallTest {
         })
 
         backingCall.completeWithException(HttpException(Response.error<String>(404, "Server Error".toResponseBody())))
+    }
+
+    @Test
+    fun `should parse error body correctly when ServerError occurs`() {
+
+        val errorBody = "An error occurred"
+        val responseCode = 404
+
+        networkResponseCall.enqueue(object: Callback<NetworkResponse<String, String>> {
+            override fun onResponse(call: Call<NetworkResponse<String, String>>, response: Response<NetworkResponse<String, String>>) {
+                with(response.body()) {
+                    this as NetworkResponse.ServerError<String>
+                    body shouldBe errorBody
+                    code shouldBe responseCode
+                }
+            }
+
+            override fun onFailure(call: Call<NetworkResponse<String, String>>, t: Throwable) {
+                throw IllegalStateException()
+            }
+        })
+        backingCall.complete(Response.error(responseCode, errorBody.toResponseBody()))
     }
 
     @Test

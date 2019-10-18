@@ -16,10 +16,20 @@ internal class NetworkResponseCall<S : Any, E : Any>(
         backingCall.enqueue(object : Callback<S> {
             override fun onResponse(call: Call<S>, response: Response<S>) {
                 val body = response.body()
-                if (body != null) {
-                    callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.Success(body, response.headers())))
+                val headers = response.headers()
+                val code = response.code()
+                val errorBody = response.errorBody()
+
+                if (response.isSuccessful) {
+                    if (body != null) {
+                        callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.Success(body, headers)))
+                    } else {
+                        // Response is successful but the body is null, so there's probably a server error here
+                        callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(null, code, headers)))
+                    }
                 } else {
-                    callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(null, response.code(), response.headers())))
+                    val convertedErrorBody = try { errorConverter.convert(errorBody) } catch (ex: Exception) { null }
+                    callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(convertedErrorBody, code, headers)))
                 }
             }
 
