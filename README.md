@@ -1,4 +1,7 @@
 ### NetworkResponse Retrofit adapter
+
+[![Build Status](https://github.com/haroldadmin/networkresponseadapter/workflows/CI/badge.svg)](https://github.com/haroldadmin/networkresponseadapter/actions)
+
 A call adapter that handles errors as a part of state
 
 ---
