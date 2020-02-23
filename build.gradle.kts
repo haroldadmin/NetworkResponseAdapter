@@ -26,4 +26,6 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")
     testImplementation("com.google.guava:guava:26.0-jre")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
+    testImplementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+    testImplementation("com.squareup.retrofit2:converter-moshi:2.6.1")
 }

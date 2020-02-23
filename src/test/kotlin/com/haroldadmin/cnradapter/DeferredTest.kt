@@ -81,10 +81,6 @@ internal class DeferredTest : DescribeSpec() {
                     (response as NetworkResponse.ServerError<String>).code shouldBe 404
                 }
 
-                it("Should have a null body") {
-                    (response as NetworkResponse.ServerError<String>).body shouldBe null
-                }
-
                 it("Should have headers") {
                     with((response as NetworkResponse.ServerError<String>)) {
                         headers shouldNotBe null
