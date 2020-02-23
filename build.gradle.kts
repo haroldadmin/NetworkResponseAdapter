@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm").version("1.3.50")
+    id("org.jetbrains.kotlin.jvm").version("1.3.61")
     maven
 }
 
@@ -14,18 +14,23 @@ val test by tasks.getting(Test::class) {
 }
 
 tasks.wrapper {
-    gradleVersion = "5.6.2"
+    gradleVersion = "6.2"
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
-    implementation("com.squareup.retrofit2:retrofit:2.6.1")
-    implementation("com.squareup.okhttp3:okhttp:4.2.0")
 
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")
+    val coroutinesVersion = "1.3.3"
+    val retrofitVersion = "2.7.1"
+    val okHttpVersion = "4.4.0"
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
+
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okHttpVersion")
     testImplementation("com.google.guava:guava:26.0-jre")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
     testImplementation("com.squareup.moshi:moshi-kotlin:1.9.2")
-    testImplementation("com.squareup.retrofit2:converter-moshi:2.6.1")
+    testImplementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
 }
