@@ -28,8 +28,13 @@ internal class NetworkResponseCall<S : Any, E : Any>(
                         callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(null, code, headers)))
                     }
                 } else {
-                    val convertedErrorBody = try { errorConverter.convert(errorBody) } catch (ex: Exception) { null }
-                    callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(convertedErrorBody, code, headers)))
+                    val networkResponse = try {
+                        val convertedBody = errorConverter.convert(errorBody)
+                        NetworkResponse.ServerError(convertedBody, code, headers)
+                    } catch(ex: Exception) {
+                        NetworkResponse.UnknownError(ex)
+                    }
+                    callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
                 }
             }
 

@@ -18,4 +18,11 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
      * A request that didn't result in a response.
      */
     data class NetworkError(val error: IOException) : NetworkResponse<Nothing, Nothing>()
+
+    /**
+     * A request that resulted in an error different from an IO or Server error.
+     *
+     * An example of such an error is JSON parsing exception thrown by a serialization library.
+     */
+    data class UnknownError(val error: Throwable): NetworkResponse<Nothing, Nothing>()
 }

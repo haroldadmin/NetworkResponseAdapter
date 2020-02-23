@@ -57,9 +57,18 @@ internal class DeferredNetworkResponseAdapter<T : Any, U : Any>(
                 val headers = response.headers()
                 val responseCode = response.code()
                 val body = response.body()
-                body?.let {
-                    deferred.complete(NetworkResponse.Success(it, headers))
-                } ?: deferred.complete(NetworkResponse.ServerError(null, responseCode, headers))
+
+                val networkResponse = if (body != null) {
+                    NetworkResponse.Success(body, headers)
+                } else {
+                    try {
+                        val convertedErrorBody = errorConverter.convert(response.errorBody())
+                        NetworkResponse.ServerError(convertedErrorBody, responseCode, headers)
+                    } catch (ex: Exception) {
+                        NetworkResponse.UnknownError(ex)
+                    }
+                }
+                deferred.complete(networkResponse)
             }
         })
 
