@@ -128,7 +128,8 @@ The RxJava retrofit adapter treats non 2xx error codes as errors too, which seem
 This is not the best way to deal with errors from an API response, because they can contain meaningful information too. They should not be specifically dealt with in `onError` blocks.
 
 However, because a lot of things are treated as errors in the Rx Adapter, retrying becomes as easy as dropping the `retry()` operator in the middle of the stream.
-While the solution provided by this library is convenient as that, you can take a look at the `executeWithRetry` utility method.
+
+While the solution provided by this library is not as convenient as that, you can take a look at the `executeWithRetry` utility method.
 It is a higher order function which can retry your network requests if they fail.
 
 #### Installation
