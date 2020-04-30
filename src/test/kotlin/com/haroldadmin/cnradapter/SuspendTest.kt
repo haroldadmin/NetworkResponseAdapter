@@ -69,7 +69,7 @@ internal class SuspendTest: AnnotationSpec() {
             shouldBeTypeOf<NetworkResponse.ServerError<String>>()
             this as NetworkResponse.ServerError
             code shouldBe responseCode
-            body shouldBe null
+            body.isNullOrBlank() shouldBe true
             headers!!["TEST"] shouldBe "test"
         }
     }

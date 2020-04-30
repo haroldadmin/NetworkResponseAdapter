@@ -14,8 +14,15 @@ import java.io.IOException
 
 internal class NetworkResponseCallTest: AnnotationSpec() {
     private val errorConverter = Converter<ResponseBody, String> { it.string() }
-    private val backingCall = CompletableCall<String>()
-    private val networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter)
+
+    private lateinit var backingCall: CompletableCall<String>
+    private lateinit var networkResponseCall: NetworkResponseCall<String, String>
+
+    @Before
+    fun setup() {
+        backingCall = CompletableCall<String>()
+        networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter)
+    }
 
     @Test(expected = UnsupportedOperationException::class)
     fun `should throw an error when invoking 'execute'`() {

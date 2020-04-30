@@ -47,9 +47,14 @@ internal class ErrorExtractionTest: AnnotationSpec() {
 
     private class CustomException: Exception()
 
-    @Test(expected = CustomException::class)
+    @Test
     fun `extract error from an unknown exception test`() {
         val exception = CustomException()
-        exception.extractNetworkResponse<String, String>(errorConverter)
+        val response = exception.extractNetworkResponse<String, String>(errorConverter)
+        with(response) {
+            shouldBeTypeOf<NetworkResponse.UnknownError>()
+            this as NetworkResponse.UnknownError
+            this.error shouldBe exception
+        }
     }
 }
