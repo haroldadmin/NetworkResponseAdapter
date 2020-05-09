@@ -3,18 +3,17 @@ package com.haroldadmin.cnradapter
 import io.kotlintest.matchers.types.shouldBeSameInstanceAs
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.shouldBe
+import io.kotlintest.specs.AnnotationSpec
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Test
 import retrofit2.Converter
-import retrofit2.http.Header
 import java.io.IOException
 import java.lang.Exception
 
-internal class ErrorExtractionTest {
+internal class ErrorExtractionTest: AnnotationSpec() {
 
     private val errorConverter = Converter<ResponseBody, String> { responseBody -> responseBody.toString() }
 
@@ -48,9 +47,14 @@ internal class ErrorExtractionTest {
 
     private class CustomException: Exception()
 
-    @Test(expected = CustomException::class)
+    @Test
     fun `extract error from an unknown exception test`() {
         val exception = CustomException()
-        exception.extractNetworkResponse<String, String>(errorConverter)
+        val response = exception.extractNetworkResponse<String, String>(errorConverter)
+        with(response) {
+            shouldBeTypeOf<NetworkResponse.UnknownError>()
+            this as NetworkResponse.UnknownError
+            this.error shouldBe exception
+        }
     }
 }
