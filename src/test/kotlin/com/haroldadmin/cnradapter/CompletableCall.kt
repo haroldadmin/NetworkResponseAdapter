@@ -1,6 +1,7 @@
 package com.haroldadmin.cnradapter
 
 import okhttp3.Request
+import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -83,4 +84,6 @@ class CompletableCall<T>(private val request: Request = DUMMY_REQUEST) : Call<T>
             }
         }
     }
+
+    override fun timeout(): Timeout = throw UnsupportedOperationException("Timeout not supported for completable call")
 }
