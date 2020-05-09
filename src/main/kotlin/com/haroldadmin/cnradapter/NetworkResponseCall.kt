@@ -2,6 +2,7 @@ package com.haroldadmin.cnradapter
 
 import okhttp3.Request
 import okhttp3.ResponseBody
+import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
@@ -64,4 +65,6 @@ internal class NetworkResponseCall<S : Any, E : Any>(
     }
 
     override fun request(): Request = backingCall.request()
+
+    override fun timeout() =  backingCall.timeout()
 }
