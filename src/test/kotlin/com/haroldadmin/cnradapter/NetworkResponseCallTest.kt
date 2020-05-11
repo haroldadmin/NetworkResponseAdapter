@@ -21,7 +21,7 @@ internal class NetworkResponseCallTest: AnnotationSpec() {
     @Before
     fun setup() {
         backingCall = CompletableCall<String>()
-        networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter)
+        networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter, String::class.java)
     }
 
     @Test(expected = UnsupportedOperationException::class)

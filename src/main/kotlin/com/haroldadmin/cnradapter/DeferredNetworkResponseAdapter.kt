@@ -1,9 +1,9 @@
 package com.haroldadmin.cnradapter
+
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import okhttp3.ResponseBody
 import retrofit2.*
-import java.io.IOException
 import java.lang.reflect.Type
 
 /**
@@ -17,8 +17,8 @@ import java.lang.reflect.Type
  */
 
 internal class DeferredNetworkResponseAdapter<T : Any, U : Any>(
-        private val successBodyType: Type,
-        private val errorConverter: Converter<ResponseBody, U>
+    private val successBodyType: Type,
+    private val errorConverter: Converter<ResponseBody, U>
 ) : CallAdapter<T, Deferred<NetworkResponse<T, U>>> {
 
     /**
@@ -54,20 +54,7 @@ internal class DeferredNetworkResponseAdapter<T : Any, U : Any>(
             }
 
             override fun onResponse(call: Call<T>, response: Response<T>) {
-                val headers = response.headers()
-                val responseCode = response.code()
-                val body = response.body()
-
-                val networkResponse = if (body != null) {
-                    NetworkResponse.Success(body, headers)
-                } else {
-                    try {
-                        val convertedErrorBody = errorConverter.convert(response.errorBody())
-                        NetworkResponse.ServerError(convertedErrorBody, responseCode, headers)
-                    } catch (ex: Exception) {
-                        NetworkResponse.UnknownError(ex)
-                    }
-                }
+                val networkResponse = ResponseHandler.handle(response, successBodyType, errorConverter)
                 deferred.complete(networkResponse)
             }
         })

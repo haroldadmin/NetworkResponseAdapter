@@ -81,21 +81,35 @@ internal class SuspendTest: AnnotationSpec() {
         response.shouldBeTypeOf<NetworkResponse.NetworkError>()
     }
 
-    // Ignore this test because someone else wants to work on solving this issue:
-    // https://github.com/haroldadmin/NetworkResponseAdapter/issues/9
     @Test
-    @Ignore
     fun `successful response with empty body`() {
         val successResponseCode = 204
         server.enqueue(MockResponse().apply {
             setResponseCode(successResponseCode)
         })
-        val response = runBlocking { service.getTextSuspend() }
+
+        val response = runBlocking { service.getEmptyBodySuspend() }
 
         with(response) {
-            shouldBeTypeOf<NetworkResponse.Success<String>>()
+            shouldBeTypeOf<NetworkResponse.Success<Unit>>()
             this as NetworkResponse.Success
-            body shouldBe null
+            body shouldBe Unit
+        }
+    }
+
+    @Test
+    fun `unsuccessful response with empty body`() {
+        val successResponseCode = 400
+        server.enqueue(MockResponse().apply {
+            setResponseCode(successResponseCode)
+        })
+
+        val response = runBlocking { service.getEmptyBodySuspend() }
+
+        with(response) {
+            shouldBeTypeOf<NetworkResponse.ServerError<String>>()
+            this as NetworkResponse.ServerError
+            body shouldBe ""
         }
     }
 

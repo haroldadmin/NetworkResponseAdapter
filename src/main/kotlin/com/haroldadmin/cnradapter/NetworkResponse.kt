@@ -12,7 +12,11 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
     /**
      * A request that resulted in a response with a non-2xx status code.
      */
-    data class ServerError<U : Any>(val body: U?, val code: Int, val headers: Headers? = null) : NetworkResponse<Nothing, U>()
+    data class ServerError<U : Any>(
+        val body: U?,
+        val code: Int,
+        val headers: Headers? = null
+    ) : NetworkResponse<Nothing, U>()
 
     /**
      * A request that didn't result in a response.
@@ -24,5 +28,5 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
      *
      * An example of such an error is JSON parsing exception thrown by a serialization library.
      */
-    data class UnknownError(val error: Throwable): NetworkResponse<Nothing, Nothing>()
+    data class UnknownError(val error: Throwable) : NetworkResponse<Nothing, Nothing>()
 }
