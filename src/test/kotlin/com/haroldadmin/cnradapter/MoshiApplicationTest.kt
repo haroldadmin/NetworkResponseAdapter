@@ -6,6 +6,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.matchers.types.shouldBeInstanceOf
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.AnnotationSpec
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
@@ -44,6 +45,12 @@ internal interface LaunchesService {
     fun launchForFlightNumberAsyncInvalid(
         @Path("flightNumber") flightNumber: Long
     ): Deferred<NetworkResponse<LaunchInvalid, GenericErrorResponseInvalid>>
+
+    @GET("/health")
+    suspend fun healthCheck(): NetworkResponse<Unit, GenericErrorResponse>
+
+    @GET("/health")
+    fun deferredHealthCheck(): Deferred<NetworkResponse<Unit, GenericErrorResponse>>
 }
 
 internal class TestApplication(
@@ -72,6 +79,13 @@ internal class TestApplication(
         launchesService.launchForFlightNumberAsyncInvalid(flightNumber).await()
     }
 
+    fun healthCheck(): NetworkResponse<Unit, GenericErrorResponse> = runBlocking {
+        launchesService.healthCheck()
+    }
+
+    fun deferredHealthCheck(): NetworkResponse<Unit, GenericErrorResponse> = runBlocking {
+        launchesService.deferredHealthCheck().await()
+    }
 }
 
 internal class MoshiApplicationTest: AnnotationSpec() {
@@ -202,5 +216,31 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response as NetworkResponse.UnknownError
         response.error.shouldBeInstanceOf<JsonDataException>()
+    }
+
+    @Test
+    fun `should parse empty body as Unit`() {
+        val app = TestApplication(service)
+        server.enqueue(MockResponse().apply {
+            setResponseCode(204)
+        })
+        val response = app.healthCheck()
+
+        response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
+        response as NetworkResponse.Success
+        response.body shouldBe Unit
+    }
+
+    @Test
+    fun `should parse empty body as Unit for deferred methods too`() {
+        val app = TestApplication(service)
+        server.enqueue(MockResponse().apply {
+            setResponseCode(204)
+        })
+        val response = app.deferredHealthCheck()
+
+        response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
+        response as NetworkResponse.Success
+        response.body shouldBe Unit
     }
 }

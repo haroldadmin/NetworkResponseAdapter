@@ -8,7 +8,7 @@ import java.io.IOException
 internal const val UNKNOWN_ERROR_RESPONSE_CODE = 520
 
 internal fun <E : Any> HttpException.extractFromHttpException(
-        errorConverter: Converter<ResponseBody, E>
+    errorConverter: Converter<ResponseBody, E>
 ): NetworkResponse.ServerError<E> {
     val error = response()?.errorBody()
     val responseCode = response()?.code() ?: UNKNOWN_ERROR_RESPONSE_CODE
@@ -28,7 +28,7 @@ internal fun <E : Any> HttpException.extractFromHttpException(
 }
 
 internal fun <S : Any, E : Any> Throwable.extractNetworkResponse(
-        errorConverter: Converter<ResponseBody, E>
+    errorConverter: Converter<ResponseBody, E>
 ): NetworkResponse<S, E> {
     return when (this) {
         is IOException -> NetworkResponse.NetworkError(this)

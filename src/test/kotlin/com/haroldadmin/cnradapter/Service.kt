@@ -9,4 +9,7 @@ interface Service {
 
     @GET("/suspend")
     suspend fun getTextSuspend(): NetworkResponse<String, String>
+
+    @GET("/suspend-empty-body")
+    suspend fun getEmptyBodySuspend(): NetworkResponse<Unit, String>
 }

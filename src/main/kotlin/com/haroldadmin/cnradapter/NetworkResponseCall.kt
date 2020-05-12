@@ -2,41 +2,23 @@ package com.haroldadmin.cnradapter
 
 import okhttp3.Request
 import okhttp3.ResponseBody
-import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
+import java.lang.reflect.Type
 
 internal class NetworkResponseCall<S : Any, E : Any>(
-        private val backingCall: Call<S>,
-        private val errorConverter: Converter<ResponseBody, E>
+    private val backingCall: Call<S>,
+    private val errorConverter: Converter<ResponseBody, E>,
+    private val successBodyType: Type
 ) : Call<NetworkResponse<S, E>> {
 
     override fun enqueue(callback: Callback<NetworkResponse<S, E>>) = synchronized(this) {
         backingCall.enqueue(object : Callback<S> {
             override fun onResponse(call: Call<S>, response: Response<S>) {
-                val body = response.body()
-                val headers = response.headers()
-                val code = response.code()
-                val errorBody = response.errorBody()
-
-                if (response.isSuccessful) {
-                    if (body != null) {
-                        callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.Success(body, headers)))
-                    } else {
-                        // Response is successful but the body is null, so there's probably a server error here
-                        callback.onResponse(this@NetworkResponseCall, Response.success(NetworkResponse.ServerError(null, code, headers)))
-                    }
-                } else {
-                    val networkResponse = try {
-                        val convertedBody = errorConverter.convert(errorBody)
-                        NetworkResponse.ServerError(convertedBody, code, headers)
-                    } catch(ex: Exception) {
-                        NetworkResponse.UnknownError(ex)
-                    }
-                    callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
-                }
+                val networkResponse = ResponseHandler.handle(response, successBodyType, errorConverter)
+                callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
             }
 
             override fun onFailure(call: Call<S>, throwable: Throwable) {
@@ -50,7 +32,11 @@ internal class NetworkResponseCall<S : Any, E : Any>(
         backingCall.isExecuted
     }
 
-    override fun clone(): Call<NetworkResponse<S, E>> = NetworkResponseCall(backingCall.clone(), errorConverter)
+    override fun clone(): Call<NetworkResponse<S, E>> = NetworkResponseCall(
+        backingCall.clone(),
+        errorConverter,
+        successBodyType
+    )
 
     override fun isCanceled(): Boolean = synchronized(this) {
         backingCall.isCanceled
@@ -66,5 +52,5 @@ internal class NetworkResponseCall<S : Any, E : Any>(
 
     override fun request(): Request = backingCall.request()
 
-    override fun timeout() =  backingCall.timeout()
+    override fun timeout() = backingCall.timeout()
 }
