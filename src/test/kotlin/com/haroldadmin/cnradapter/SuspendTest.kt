@@ -52,6 +52,7 @@ internal class SuspendTest: AnnotationSpec() {
             body shouldBe responseBody
             headers shouldNotBe null
             headers!!["TEST"] shouldBe "test"
+            code shouldBe 200
         }
     }
 
@@ -94,6 +95,7 @@ internal class SuspendTest: AnnotationSpec() {
             shouldBeTypeOf<NetworkResponse.Success<Unit>>()
             this as NetworkResponse.Success
             body shouldBe Unit
+            code shouldBe 204
         }
     }
 
@@ -110,6 +112,7 @@ internal class SuspendTest: AnnotationSpec() {
             shouldBeTypeOf<NetworkResponse.ServerError<String>>()
             this as NetworkResponse.ServerError
             body shouldBe ""
+            code shouldBe 400
         }
     }
 

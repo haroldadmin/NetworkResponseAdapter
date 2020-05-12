@@ -119,6 +119,7 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.Success<Launch>>()
         response as NetworkResponse.Success
         response.body.name shouldContain "FalconSat"
+        response.code shouldBe 200
     }
 
     @Test
@@ -133,6 +134,7 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
         response as NetworkResponse.ServerError
         response.body!!.error shouldContain "Not Found"
+        response.code shouldBe 404
     }
 
     @Test
@@ -174,6 +176,7 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.Success<Launch>>()
         response as NetworkResponse.Success
         response.body.name shouldContain "FalconSat"
+        response.code shouldBe 200
     }
 
     @Test
@@ -188,6 +191,7 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
         response as NetworkResponse.ServerError
         response.body!!.error shouldContain "Not Found"
+        response.code shouldBe 404
     }
 
     @Test
@@ -229,6 +233,7 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
         response as NetworkResponse.Success
         response.body shouldBe Unit
+        response.code shouldBe 204
     }
 
     @Test
@@ -242,5 +247,6 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
         response as NetworkResponse.Success
         response.body shouldBe Unit
+        response.code shouldBe 204
     }
 }

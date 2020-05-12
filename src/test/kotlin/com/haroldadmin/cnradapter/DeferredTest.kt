@@ -60,6 +60,7 @@ internal class DeferredTest : DescribeSpec() {
                         body shouldBe responseBody
                         headers shouldNotBe null
                         headers!!.get("TEST") shouldBe "test"
+                        code shouldBe 200
                     }
                 }
             }

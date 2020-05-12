@@ -7,7 +7,11 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
     /**
      * A request that resulted in a response with a 2xx status code that has a body.
      */
-    data class Success<T : Any>(val body: T, val headers: Headers? = null) : NetworkResponse<T, Nothing>()
+    data class Success<T : Any>(
+        val body: T,
+        val headers: Headers? = null,
+        val code: Int
+    ) : NetworkResponse<T, Nothing>()
 
     /**
      * A request that resulted in a response with a non-2xx status code.
