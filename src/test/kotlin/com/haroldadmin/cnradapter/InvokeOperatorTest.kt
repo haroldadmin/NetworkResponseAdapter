@@ -8,7 +8,7 @@ import java.io.IOException
 
 private class MessageRepo {
     fun getMessage(): Deferred<NetworkResponse<String, String>> {
-        return CompletableDeferred(NetworkResponse.Success("Hello!"))
+        return CompletableDeferred(NetworkResponse.Success("Hello!", null, 200))
     }
 
     fun getMessageError(): Deferred<NetworkResponse<String, String>> {

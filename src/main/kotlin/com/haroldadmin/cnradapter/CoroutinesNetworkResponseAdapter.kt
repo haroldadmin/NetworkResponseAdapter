@@ -94,7 +94,7 @@ internal class CoroutinesNetworkResponseAdapter<T : Any, U : Any>(
                 val responseCode = response.code()
                 val body = response.body()
                 body?.let {
-                    deferred.complete(NetworkResponse.Success(it, headers))
+                    deferred.complete(NetworkResponse.Success(it, headers, responseCode))
                 } ?: deferred.complete(NetworkResponse.ServerError(null, responseCode, headers))
             }
         })

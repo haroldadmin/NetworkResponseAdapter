@@ -36,13 +36,13 @@ internal object ResponseHandler {
 
         return if (response.isSuccessful) {
             if (body != null) {
-                NetworkResponse.Success(body, headers)
+                NetworkResponse.Success(body, headers, code)
             } else {
                 // Special case: If the response is successful and the body is null, return a successful response
                 // if the service method declares the success body type as Unit. Otherwise, return a server error
                 if (successBodyType == Unit::class.java) {
                     @Suppress("UNCHECKED_CAST")
-                    NetworkResponse.Success(Unit, headers) as NetworkResponse<S, E>
+                    NetworkResponse.Success(Unit, headers, code) as NetworkResponse<S, E>
                 } else {
                     NetworkResponse.ServerError(null, code, headers)
                 }
