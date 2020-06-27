@@ -121,6 +121,13 @@ It is generic on two types: a response (`S`), and an error (`E`). The response t
   println(usersResponse() ?: "No users were found")
   ```
 
+- Some API responses convey information through headers only, and contain empty bodies. Such endpoints must be used with `Unit` as their success type.
+
+  ```kotlin
+  @GET("/empty-body-endpoint")
+  suspend fun getEmptyBodyResponse(): NetworkResponse<Unit, ErrorType>
+  ```
+
 ---
 
 ## Benefits
