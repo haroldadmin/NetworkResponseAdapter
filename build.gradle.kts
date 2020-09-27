@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.4.10")
+    id("org.jetbrains.dokka") version "1.4.10"
     maven
 }
 
@@ -33,4 +34,8 @@ dependencies {
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
     testImplementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     testImplementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+}
+
+tasks.dokkaGfm.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
 }
