@@ -1,0 +1,38 @@
+site_name: NetworkResponseAdapter
+site_url: https://haroldadmin.github.io/NetworkResponseAdapter
+site_author: Kshitij Chauhan
+site_description: >-
+  Documentation for NetworkResponseAdapter: a Retrofit Call Adapter 
+  that handles errors as a part of state
+repo_name: NetworkResponseAdapter
+repo_url: https://github.com/haroldadmin/NetworkResponseAdapter
+
+theme:
+  name: material
+  language: en
+  features: navigation.tabs
+  font:
+    text: Roboto
+    code: Roboto Mono
+  palette:
+    primary: pink
+    scheme: preference
+  include_search_page: false
+  search_index_only: true
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - admonition
+
+plugins:
+  - search
+
+nav:
+  - Docs:
+      - Introduction: ./index.md
+      - Extensions: ./extensions.md
+      - Special Cases: ./special-cases.md
+      - Benefits: ./benefits.md
+  - API Reference:
+      - ./api/index.md
