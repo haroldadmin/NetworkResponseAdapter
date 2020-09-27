@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm").version("1.3.72")
+    id("org.jetbrains.kotlin.jvm").version("1.4.10")
     maven
 }
 
@@ -19,9 +19,9 @@ tasks.wrapper {
 
 dependencies {
 
-    val coroutinesVersion = "1.3.6"
-    val retrofitVersion = "2.8.1"
-    val okHttpVersion = "4.6.0"
+    val coroutinesVersion = "1.3.9"
+    val retrofitVersion = "2.9.0"
+    val okHttpVersion = "4.8.1"
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
