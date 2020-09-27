@@ -1,6 +1,6 @@
 name: Docs
 
-on: [release]
+on: [release, workflow_dispatch]
 
 jobs:
   build:
