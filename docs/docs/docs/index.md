@@ -58,12 +58,21 @@ allprojects {
 }
 ```
 
-And then add the dependency in your gradle file:
+Then add the dependency in your gradle file:
 
 ```groovy
 dependencies {
   implementation "com.github.haroldadmin:NetworkResponseAdapter:(latest-version)"
 }
+```
+
+And finally, register `NetworkResponseAdapter` with Retrofit:
+
+```kotlin
+val retrofit = Retrofit.Builder()
+ .addCallAdapterFactory(NetworkResponseAdapterFactory())
+ ... // Other config
+ .build()
 ```
 
 <!-- prettier-ignore-start -->
