@@ -534,10 +534,17 @@
 <span class="o">}</span>
 </code></pre></div>
 
-<p>And then add the dependency in your gradle file:</p>
+<p>Then add the dependency in your gradle file:</p>
 <div class="highlight"><pre><span></span><code><span class="n">dependencies</span> <span class="o">{</span>
   <span class="n">implementation</span> <span class="s2">&quot;com.github.haroldadmin:NetworkResponseAdapter:(latest-version)&quot;</span>
 <span class="o">}</span>
+</code></pre></div>
+
+<p>And finally, register <code>NetworkResponseAdapter</code> with Retrofit:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">retrofit</span> <span class="p">=</span> <span class="n">Retrofit</span><span class="p">.</span><span class="n">Builder</span><span class="p">()</span>
+ <span class="p">.</span><span class="n">addCallAdapterFactory</span><span class="p">(</span><span class="n">NetworkResponseAdapterFactory</span><span class="p">())</span>
+ <span class="p">...</span> <span class="c1">// Other config</span>
+ <span class="p">.</span><span class="n">build</span><span class="p">()</span>
 </code></pre></div>
 
 <!-- prettier-ignore-start -->
