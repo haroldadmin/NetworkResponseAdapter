@@ -324,6 +324,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#status-code-and-headers-in-networkresponseunknownerror" class="md-nav__link">
+    Status code and Headers in NetworkResponse.UnknownError
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -423,6 +430,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#status-code-and-headers-in-networkresponseunknownerror" class="md-nav__link">
+    Status code and Headers in NetworkResponse.UnknownError
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -466,6 +480,18 @@
  <span class="p">.</span><span class="n">baseUrl</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">)</span>
  <span class="p">.</span><span class="n">build</span><span class="p">()</span>
 </code></pre></div>
+
+<h2 id="status-code-and-headers-in-networkresponseunknownerror">Status code and Headers in <code>NetworkResponse.UnknownError</code></h2>
+<p>Network requests that result in a <code>NetworkResponse.UnknownError</code> can still convey useful information through their headers and status code. Unfortunately, it is not always possible to extract these values from a failed request.</p>
+<p>Therefore, the <code>NetworkResponse.UnknownError</code> class contains nullable fields for the status code and headers. These fields are populated if their values can be extract from a failed request.</p>
+<div class="highlight"><pre><span></span><code><span class="k">data</span> <span class="k">class</span> <span class="nc">UnknownError</span><span class="p">(</span>
+    <span class="k">val</span> <span class="py">error</span><span class="p">:</span> <span class="n">Throwable</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">code</span><span class="p">:</span> <span class="n">Int</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">headers</span><span class="p">:</span> <span class="n">Headers</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">NetworkResponse</span><span class="p">&lt;</span><span class="n">Nothing</span><span class="p">,</span> <span class="n">Nothing</span><span class="p">&gt;()</span>
+</code></pre></div>
+
+<p>It is possible to extract this information from a failed request in most cases. However, if the server responds with a successful status code (200 &lt;= code &lt; 300) and an invalid body (which can not be parsed correctly), Retrofit assumes the network request failed. It forwards only the raised error and the original call to the registered call adapter, and thus all information about the response is lost resulting in a <code>NetworkResponse.UnknownError</code> with null <code>code</code> and <code>headers</code>.</p>
                 
               
               

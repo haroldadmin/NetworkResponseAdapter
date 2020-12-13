@@ -406,7 +406,7 @@
 <p>[jvm] </p>
 <p>A request that resulted in an error different from an IO or Server error.</p>
 <p>An example of such an error is JSON parsing exception thrown by a serialization library.</p>
-<p>data class <a href="./">UnknownError</a>(<strong>error</strong>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>) : <a href="../">NetworkResponse</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing/index.html">Nothing</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing/index.html">Nothing</a>&gt;    </p>
+<p>data class <a href="./">UnknownError</a>(<strong>error</strong>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>, <strong>code</strong>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?, <strong>headers</strong>: Headers?) : <a href="../">NetworkResponse</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing/index.html">Nothing</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing/index.html">Nothing</a>&gt;    </p>
 <h2 id="constructors">Constructors</h2>
 <table>
 <thead>
@@ -418,7 +418,7 @@
 <tbody>
 <tr>
 <td><a href="-unknown-error/">UnknownError</a></td>
-<td>[jvm] fun <a href="-unknown-error/">UnknownError</a>(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>)   <br></td>
+<td>[jvm] fun <a href="-unknown-error/">UnknownError</a>(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>, code: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?, headers: Headers?)   <br></td>
 </tr>
 </tbody>
 </table>
@@ -436,8 +436,16 @@
 <td>[jvm]  <br>Content  <br>operator fun <a href="component1/">component1</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>  <br><br><br></td>
 </tr>
 <tr>
+<td><a href="component2/">component2</a></td>
+<td>[jvm]  <br>Content  <br>operator fun <a href="component2/">component2</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?  <br><br><br></td>
+</tr>
+<tr>
+<td><a href="component3/">component3</a></td>
+<td>[jvm]  <br>Content  <br>operator fun <a href="component3/">component3</a>(): Headers?  <br><br><br></td>
+</tr>
+<tr>
 <td><a href="copy/">copy</a></td>
-<td>[jvm]  <br>Content  <br>fun <a href="copy/">copy</a>(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>): <a href="./">NetworkResponse.UnknownError</a>  <br><br><br></td>
+<td>[jvm]  <br>Content  <br>fun <a href="copy/">copy</a>(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>, code: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?, headers: Headers?): <a href="./">NetworkResponse.UnknownError</a>  <br><br><br></td>
 </tr>
 <tr>
 <td><a href="../../-network-response-adapter-factory/#kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/">equals</a></td>
@@ -463,8 +471,16 @@
 </thead>
 <tbody>
 <tr>
+<td><a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/code/#/PointingToDeclaration/">code</a></td>
+<td>[jvm] val <a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/code/#/PointingToDeclaration/">code</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>?   <br></td>
+</tr>
+<tr>
 <td><a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/error/#/PointingToDeclaration/">error</a></td>
 <td>[jvm] val <a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/error/#/PointingToDeclaration/">error</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>   <br></td>
+</tr>
+<tr>
+<td><a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/headers/#/PointingToDeclaration/">headers</a></td>
+<td>[jvm] val <a href="./#com.haroldadmin.cnradapter/NetworkResponse.UnknownError/headers/#/PointingToDeclaration/">headers</a>: Headers?   <br></td>
 </tr>
 </tbody>
 </table>
