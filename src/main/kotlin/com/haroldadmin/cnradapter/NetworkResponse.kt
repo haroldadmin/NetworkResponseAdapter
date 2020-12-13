@@ -32,5 +32,9 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
      *
      * An example of such an error is JSON parsing exception thrown by a serialization library.
      */
-    data class UnknownError(val error: Throwable) : NetworkResponse<Nothing, Nothing>()
+    data class UnknownError(
+        val error: Throwable,
+        val code: Int? = null,
+        val headers: Headers? = null,
+    ) : NetworkResponse<Nothing, Nothing>()
 }
