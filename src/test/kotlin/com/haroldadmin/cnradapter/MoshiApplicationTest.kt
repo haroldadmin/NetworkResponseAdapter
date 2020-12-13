@@ -25,6 +25,7 @@ internal data class GenericErrorResponse(val error: String)
 
 internal data class GenericErrorResponseInvalid(@Json(name = "errrorrrr") val error: String)
 
+@Suppress("DeferredIsResult")
 internal interface LaunchesService {
     @GET("launches/{flightNumber}")
     suspend fun launchForFlightNumber(
@@ -143,12 +144,32 @@ internal class MoshiApplicationTest: AnnotationSpec() {
         server.enqueue(MockResponse().apply {
             setBody(resourceFileContents("/falconsat_launch.json"))
             setResponseCode(200)
+            setHeader("test", "true")
         })
         val response = app.getLaunchWithFailure(validFlightNumber)
 
         response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response as NetworkResponse.UnknownError
         response.error.shouldBeInstanceOf<JsonDataException>()
+        response.code shouldBe null
+        response.headers shouldBe null
+    }
+
+    @Test
+    fun shouldParseResponseCodeAndHeadersOfUnsuccessfulRequestWithInvalidBodyCorrectly() {
+        val app = TestApplication(service)
+        server.enqueue(MockResponse().apply {
+            setBody("""{ "message": "Too many requests!" }""")
+            setResponseCode(429)
+            setHeader("test", "true")
+        })
+        val response = app.getLaunchWithFailure(validFlightNumber)
+
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
+        response as NetworkResponse.UnknownError
+        response.error.shouldBeInstanceOf<JsonDataException>()
+        response.code shouldBe 429
+        response.headers!!["test"] shouldBe "true"
     }
 
     @Test

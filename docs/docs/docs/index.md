@@ -30,7 +30,7 @@ data class DetailsError(
 )
 
 interface Api {
-  @Get("/details)
+  @Get("/details")
   suspend fun details(): NetworkResponse<DetailsResponse, DetailsError>
 }
 
