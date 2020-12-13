@@ -31,3 +31,19 @@ val retrofit = Retrofit.Builder()
  .baseUrl("...")
  .build()
 ```
+
+## Status code and Headers in `NetworkResponse.UnknownError`
+
+Network requests that result in a `NetworkResponse.UnknownError` can still convey useful information through their headers and status code. Unfortunately, it is not always possible to extract these values from a failed request.
+
+Therefore, the `NetworkResponse.UnknownError` class contains nullable fields for the status code and headers. These fields are populated if their values can be extract from a failed request.
+
+```kotlin
+data class UnknownError(
+    val error: Throwable,
+    val code: Int? = null,
+    val headers: Headers? = null,
+) : NetworkResponse<Nothing, Nothing>()
+```
+
+It is possible to extract this information from a failed request in most cases. However, if the server responds with a successful status code (200 <= code < 300) and an invalid body (which can not be parsed correctly), Retrofit assumes the network request failed. It forwards only the raised error and the original call to the registered call adapter, and thus all information about the response is lost resulting in a `NetworkResponse.UnknownError` with null `code` and `headers`.
