@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm").version("1.4.10")
+    kotlin("jvm") version "1.4.21"
     id("org.jetbrains.dokka") version "1.4.10"
     maven
 }
@@ -11,7 +11,7 @@ repositories {
 }
 
 val test by tasks.getting(Test::class) {
-    useJUnitPlatform { }
+    useJUnitPlatform()
 }
 
 tasks.wrapper {
@@ -20,14 +20,14 @@ tasks.wrapper {
 
 dependencies {
 
-    val coroutinesVersion = "1.3.9"
+    val coroutinesVersion = "1.4.2"
     val retrofitVersion = "2.9.0"
-    val okHttpVersion = "4.8.1"
+    val okHttpVersion = "4.9.0"
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    api("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    api("com.squareup.okhttp3:okhttp:$okHttpVersion")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:$okHttpVersion")
     testImplementation("com.google.guava:guava:26.0-jre")

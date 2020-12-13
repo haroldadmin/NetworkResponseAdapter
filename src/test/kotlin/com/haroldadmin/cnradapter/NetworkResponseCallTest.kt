@@ -1,8 +1,5 @@
 package com.haroldadmin.cnradapter
 
-import com.haroldadmin.cnradapter.CompletableCall
-import com.haroldadmin.cnradapter.NetworkResponse
-import com.haroldadmin.cnradapter.NetworkResponseCall
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotlintest.shouldBe
@@ -20,8 +17,8 @@ internal class NetworkResponseCallTest: AnnotationSpec() {
 
     @Before
     fun setup() {
-        backingCall = CompletableCall<String>()
-        networkResponseCall = NetworkResponseCall<String, String>(backingCall, errorConverter, String::class.java)
+        backingCall = CompletableCall()
+        networkResponseCall = NetworkResponseCall(backingCall, errorConverter, String::class.java)
     }
 
     @Test(expected = UnsupportedOperationException::class)

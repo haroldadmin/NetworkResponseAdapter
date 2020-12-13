@@ -14,8 +14,7 @@ internal inline fun <reified T> typeOf(): Type = object : TypeToken<T>() {}.type
  * "/error_response.json"
  */
 internal fun Any.resourceFileContents(filename: String): String {
-    val contents = this::class.java.getResourceAsStream(filename).bufferedReader().use { br ->
+    return this::class.java.getResourceAsStream(filename).bufferedReader().use { br ->
         br.readText()
     }
-    return contents
 }
