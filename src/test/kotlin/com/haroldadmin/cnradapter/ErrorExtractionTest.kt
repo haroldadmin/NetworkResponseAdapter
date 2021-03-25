@@ -22,10 +22,10 @@ internal class ErrorExtractionTest: AnnotationSpec() {
         val serverResponse = "Server Error".toResponseBody()
         val response = Response.error<String>(404, serverResponse)
         val exception = HttpException(response)
-        with(exception.extractFromHttpException<String>(errorConverter)) {
+        with(exception.extractFromHttpException(errorConverter)) {
 
             shouldBeTypeOf<NetworkResponse.ServerError<String>>()
-            this as NetworkResponse.ServerError
+
 
             body shouldBe errorConverter.convert(serverResponse)
             code shouldBe 404
@@ -54,7 +54,7 @@ internal class ErrorExtractionTest: AnnotationSpec() {
         with(response) {
             shouldBeTypeOf<NetworkResponse.UnknownError>()
             this as NetworkResponse.UnknownError
-            this.error shouldBe exception
+            error shouldBe exception
         }
     }
 }
