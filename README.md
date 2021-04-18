@@ -86,6 +86,16 @@ It is generic on two types: a response (`S`), and an error (`E`). The response t
           is NetworkResponse.Success -> {
               // Handle successful response
           }
+          is NetworkResponse.Error -> {
+              // Handle error
+          }
+      }
+  
+      // If you care about what type of error
+      when (person) {
+          is NetworkResponse.Success -> {
+              // Handle successful response
+          }
           is NetworkResponse.ServerError -> {
               // Handle server error
           }
