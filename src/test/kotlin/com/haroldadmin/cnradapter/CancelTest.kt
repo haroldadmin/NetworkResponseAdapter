@@ -13,16 +13,22 @@ internal class CancelTest : DescribeSpec({
     val mockWebServer = MockWebServer()
     val factory = NetworkResponseAdapterFactory()
     val retrofit = Retrofit.Builder()
-            .baseUrl(mockWebServer.url("/"))
-            .addConverterFactory(StringConverterFactory())
-            .addCallAdapterFactory(factory)
-            .build()
+        .baseUrl(mockWebServer.url("/"))
+        .addConverterFactory(StringConverterFactory())
+        .addCallAdapterFactory(factory)
+        .build()
 
     describe("Cancellation") {
         val deferredStringType = typeOf<Deferred<NetworkResponse<String, String>>>()
-        val adapter = factory.get(deferredStringType, emptyArray(), retrofit)!! as CallAdapter<String, Deferred<NetworkResponse<String, String>>>
 
-        context("Successfull call") {
+        @Suppress("UNCHECKED_CAST")
+        val adapter = factory.get(
+            deferredStringType,
+            emptyArray(),
+            retrofit
+        )!! as CallAdapter<String, Deferred<NetworkResponse<String, String>>>
+
+        context("Successful call") {
             val call = CompletableCall<String>()
             val deferred = adapter.adapt(call)
             call.complete("Hey")

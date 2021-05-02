@@ -13,8 +13,6 @@ sealed class NetworkResponse<out T : Any, out U : Any> {
         val code: Int
     ) : NetworkResponse<T, Nothing>()
 
-    fun wasSuccessful(): Boolean = this is Success
-
     /**
      * Describe an error without a specific type.
      * Makes it easier to deal with the case where you just want to know that an error occurred,
