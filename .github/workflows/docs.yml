@@ -1,17 +1,12 @@
 name: Docs
 
-on: [push, release, workflow_dispatch]
+on: [release, workflow_dispatch]
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      # - name: Setup JDK 1.8
-      #   uses: actions/setup-java@v1
-      #   with:
-      #     java-version: 1.8
 
       - name: Set up Python
         uses: actions/setup-python@v2
