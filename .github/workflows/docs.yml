@@ -1,41 +1,46 @@
 name: Docs
 
-on: [release, workflow_dispatch]
+on: [push, release, workflow_dispatch]
 
 jobs:
-  build:
+  docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      - name: Setup JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
 
-    - name: Setup Python dependencies
-      run: pip3 install --upgrade pip && pip3 install -r ./docs/requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
 
-    - name: Generate Docs
-      run: gradle dokkaGfm
+      - name: Setup Pipenv
+        run: pip3 install pipenv
 
-    - name: Cleanup existing docs
-      run: rm -rf docs/docs/docs/api && mkdir docs/docs/docs/api
+      - name: Setup Python dependencies
+        working-directory: ./docs
+        run: pipenv install
 
-    - name: Copy generated docs
-      run: cp -r build/dokka/coroutines-network-response-adapter/* docs/docs/docs/api
+      - name: Generate Docs
+        run: ./gradlew dokkaGfm
 
-    - name: Build mkdocs website
-      run: cd ./docs/docs && mkdocs build --clean --verbose
+      - name: Cleanup existing docs
+        run: rm -rf docs/docs/api && mkdir docs/docs/api
 
-    - name: Deploy mkdocs website
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/docs/site
-        publish_branch: gh-pages
+      - name: Copy generated docs
+        run: cp -r build/dokka docs/docs/api
+
+      - name: Build mkdocs website
+        working-directory: ./docs
+        run: mkdocs build --clean --verbose
+
+      - name: Deploy mkdocs website
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/site
+          publish_branch: gh-pages
