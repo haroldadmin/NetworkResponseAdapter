@@ -32,7 +32,7 @@ jobs:
         run: rm -rf docs/docs/api && mkdir docs/docs/api
 
       - name: Copy generated docs
-        run: cp -r build/dokka docs/docs/api
+        run: cp -r build/dokka/* docs/docs/api/
 
       - name: Build mkdocs website
         working-directory: ./docs
