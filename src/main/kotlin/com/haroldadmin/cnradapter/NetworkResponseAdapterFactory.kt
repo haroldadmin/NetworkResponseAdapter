@@ -11,14 +11,20 @@ class NetworkResponseAdapterFactory : CallAdapter.Factory() {
 
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
 
-        check(returnType is ParameterizedType) { "$returnType must be parameterized. Raw types are not supported" }
+        if (returnType !is ParameterizedType) {
+            // returnType must be parameterized. Raw types are not supported
+            return null
+        }
 
         val containerType = getParameterUpperBound(0, returnType)
         if (getRawType(containerType) != NetworkResponse::class.java) {
             return null
         }
 
-        check(containerType is ParameterizedType) { "$containerType must be parameterized. Raw types are not supported" }
+        if (containerType !is ParameterizedType) {
+            // containerType must be parameterized. Raw types are not supported
+            return null
+        }
 
         val (successBodyType, errorBodyType) = containerType.getBodyTypes()
         val errorBodyConverter = retrofit.nextResponseBodyConverter<Any>(null, errorBodyType, annotations)
