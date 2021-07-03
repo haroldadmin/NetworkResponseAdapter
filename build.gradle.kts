@@ -1,28 +1,33 @@
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.5.20"
     id("org.jetbrains.dokka") version "1.4.32"
-    maven
+    `maven-publish`
 }
 
-group = "com.github.haroldadmin"
-
 repositories {
-    jcenter()
+   mavenCentral()
 }
 
 val test by tasks.getting(Test::class) {
     useJUnitPlatform()
 }
 
-tasks.wrapper {
-    gradleVersion = "6.2"
+publishing {
+    publications {
+        create<MavenPublication>("NetworkResponseAdapter") {
+            groupId = "com.github.haroldadmin"
+            artifactId = "NetworkResponseAdapter"
+            version = "4.2.1"
+
+            from(components["java"])
+        }
+    }
 }
 
 dependencies {
-
-    val coroutinesVersion = "1.4.2"
+    val coroutinesVersion = "1.5.0"
     val retrofitVersion = "2.9.0"
-    val okHttpVersion = "4.9.0"
+    val okHttpVersion = "4.9.1"
 
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
