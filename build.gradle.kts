@@ -17,7 +17,7 @@ publishing {
         create<MavenPublication>("NetworkResponseAdapter") {
             groupId = "com.github.haroldadmin"
             artifactId = "NetworkResponseAdapter"
-            version = "4.2.1"
+            version = "4.2.2"
 
             from(components["java"])
         }
