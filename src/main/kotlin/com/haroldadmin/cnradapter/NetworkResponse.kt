@@ -27,7 +27,7 @@ sealed interface NetworkResponse<out T : Any, out U : Any> {
      *    is NetworkResponse.Error -> // Action failed do something with error
      * }
      */
-    sealed interface Error<out T : Any, out U : Any> : NetworkResponse<T, U> {
+    sealed interface Error<out U : Any> : NetworkResponse<Nothing, U> {
         val error: Throwable
     }
 
@@ -38,14 +38,14 @@ sealed interface NetworkResponse<out T : Any, out U : Any> {
         val body: U?,
         val code: Int,
         val headers: Headers? = null
-    ) : Error<Nothing, U> {
+    ) : Error<U> {
         override val error = IOException("Network server error: $code \n$body")
     }
 
     /**
      * A request that didn't result in a response.
      */
-    data class NetworkError(override val error: IOException) : Error<Nothing, Nothing>
+    data class NetworkError(override val error: IOException) : Error<Nothing>
 
     /**
      * A request that resulted in an error different from an IO or Server error.
@@ -56,5 +56,5 @@ sealed interface NetworkResponse<out T : Any, out U : Any> {
         override val error: Throwable,
         val code: Int? = null,
         val headers: Headers? = null,
-    ) : Error<Nothing, Nothing>
+    ) : Error<Nothing>
 }
