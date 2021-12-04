@@ -1,4 +1,4 @@
-package com.haroldadmin.cnradapter
+package com.haroldadmin.cnradapter.utils
 
 import okhttp3.Request
 import okio.Timeout
@@ -9,8 +9,8 @@ import java.io.InterruptedIOException
 import java.util.concurrent.CountDownLatch
 
 private val DUMMY_REQUEST = Request.Builder()
-        .url("http://example.com")
-        .build()
+    .url("http://example.com")
+    .build()
 
 /**
  * Credits to Jake Wharton for this class

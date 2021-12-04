@@ -1,4 +1,4 @@
-package com.haroldadmin.cnradapter
+package com.haroldadmin.cnradapter.utils
 
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -8,10 +8,8 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-/**
- * Credits to Jake Wharton for this class
- */
 internal class StringConverterFactory : Converter.Factory() {
+
     override fun responseBodyConverter(
         type: Type?,
         annotations: Array<Annotation>?,

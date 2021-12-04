@@ -1,4 +1,4 @@
-package com.haroldadmin.cnradapter
+package com.haroldadmin.cnradapter.utils
 
 import com.google.common.reflect.TypeToken
 import java.lang.reflect.Type

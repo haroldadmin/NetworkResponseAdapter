@@ -14,17 +14,18 @@ import kotlinx.coroutines.delay
  * @param block The suspending function to be retried
  * @return The NetworkResponse value whether it be successful or failed after retrying
  */
-suspend inline fun <T : Any, U : Any> executeWithRetry(
+public suspend inline fun <T : Any, U : Any> executeWithRetry(
     times: Int = 10,
     initialDelay: Long = 100, // 0.1 second
     maxDelay: Long = 1000, // 1 second
     factor: Double = 2.0,
+    @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
     block: suspend () -> NetworkResponse<T, U>
 ): NetworkResponse<T, U> {
     var currentDelay = initialDelay
     repeat(times - 1) {
         when (val response = block()) {
-            is NetworkResponse.NetworkError -> {
+            is NetworkResponse.Error.NetworkError -> {
                 delay(currentDelay)
                 currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
             }
@@ -45,6 +46,6 @@ suspend inline fun <T : Any, U : Any> executeWithRetry(
  *
  * println(usersResponse() ?: "No users found")
  */
-operator fun <T : Any, U : Any> NetworkResponse<T, U>.invoke(): T? {
+public operator fun <T : Any, U : Any> NetworkResponse<T, U>.invoke(): T? {
     return if (this is NetworkResponse.Success) body else null
 }
