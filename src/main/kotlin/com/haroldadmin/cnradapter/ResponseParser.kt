@@ -40,34 +40,34 @@ internal fun <S, E> Response<S>.toNetworkResponse(
 ): NetworkResponse<S, E> {
 
     if (!isSuccessful) {
-        val errorBody = errorBody()
+        val errorBody: ResponseBody? = errorBody()
         @Suppress("FoldInitializerAndIfToElvis")
         if (errorBody == null) {
-            return NetworkResponse.Error.ServerError(null, this) as NetworkResponse<S, E>
+            return NetworkResponse.Error.ServerError(null, this)
         }
 
         return try {
             val convertedBody = errorConverter.convert(errorBody)
-            NetworkResponse.Error.ServerError(convertedBody, this) as NetworkResponse<S, E>
+            NetworkResponse.Error.ServerError(convertedBody, this)
         } catch (error: Throwable) {
-            NetworkResponse.Error.UnknownError(error) as NetworkResponse<S, E>
+            NetworkResponse.Error.UnknownError(error)
         }
     }
 
-    val responseBody = body()
+    val responseBody: S? = body()
     if (responseBody == null) {
         if (successType === Unit::class.java) {
-            return NetworkResponse.Success(Unit::class.java, this) as NetworkResponse<S, E>
+            return NetworkResponse.Success<Unit, E>(Unit, this) as NetworkResponse<S, E>
         }
 
         if (code() == STATUS_NO_CONTENT) {
-            return NetworkResponse.Success(Unit::class.java, this) as NetworkResponse<S, E>
+            return NetworkResponse.Success<Unit, E>(Unit, this) as NetworkResponse<S, E>
         }
 
-        return NetworkResponse.Error.ServerError(null, this) as NetworkResponse<S, E>
+        return NetworkResponse.Error.ServerError(null, this)
     }
 
-    return NetworkResponse.Success(responseBody, this) as NetworkResponse<S, E>
+    return NetworkResponse.Success(responseBody, this)
 }
 
 /**
@@ -83,15 +83,16 @@ internal fun <S, E> Throwable.toNetworkResponse(
     errorConverter: Converter<ResponseBody, E>,
 ): NetworkResponse<S, E> {
     return when (this) {
-        is IOException -> NetworkResponse.Error.NetworkError(this) as NetworkResponse<S, E>
+        is IOException -> NetworkResponse.Error.NetworkError(this)
         is HttpException -> {
             val response = response()
+            @Suppress("SENSELESS_COMPARISON")
             if (response == null) {
-                NetworkResponse.Error.ServerError(null, null) as NetworkResponse<S, E>
+                NetworkResponse.Error.ServerError(null, null)
             } else {
                 response.toNetworkResponse(successType, errorConverter) as NetworkResponse<S, E>
             }
         }
-        else -> NetworkResponse.Error.UnknownError(this) as NetworkResponse<S, E>
+        else -> NetworkResponse.Error.UnknownError(this)
     }
 }

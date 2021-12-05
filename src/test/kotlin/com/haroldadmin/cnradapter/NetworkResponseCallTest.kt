@@ -25,7 +25,7 @@ class NetworkResponseCallTest : DescribeSpec({
                     call: Call<NetworkResponse<String, String>>,
                     response: Response<NetworkResponse<String, String>>
                 ) {
-                    val body = response.body()
+                    val body: NetworkResponse<String, String>? = response.body()
                     if (body == null) {
                         completable.completeExceptionally(Error("Received null body"))
                     } else {
@@ -41,8 +41,8 @@ class NetworkResponseCallTest : DescribeSpec({
             retrofitCall.complete("Test Message")
 
             val networkResponse = completable.await()
-            networkResponse.shouldBeTypeOf<NetworkResponse.Success<String>>()
-            (networkResponse as NetworkResponse.Success).body shouldBe "Test Message"
+            networkResponse.shouldBeTypeOf<NetworkResponse.Success<String, String>>()
+            networkResponse.body shouldBe "Test Message"
         }
 
         it("should return a response synchronously when using `execute`") {
@@ -51,10 +51,10 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.complete("Test Message")
-            val response = networkResponseCall.execute()
+            val response = networkResponseCall.awaitResponse()
 
             response.isSuccessful shouldBe true
-            response.body().shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            response.body().shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
 
             val networkResponse = response.body() as NetworkResponse.Success
             networkResponse.body shouldBe "Test Message"
@@ -81,7 +81,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
@@ -101,7 +101,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
@@ -114,7 +114,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.NetworkError>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.NetworkError<String, String>>()
         }
 
         it("should parse an unknown exception as NetworkResponse.UnknownError") {
@@ -126,7 +126,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.UnknownError>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<String, String>>()
         }
     }
 })

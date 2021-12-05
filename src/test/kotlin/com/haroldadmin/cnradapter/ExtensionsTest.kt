@@ -16,25 +16,25 @@ import java.io.IOException
 class ExtensionsTest : DescribeSpec({
     context("Overloaded Invoke Operator") {
         it("should return the underlying body for NetworkResponse.Success") {
-            val response = NetworkResponse.Success("Test Message", Response.success("Test Message"))
+            val response = NetworkResponse.Success<String, String>("Test Message", Response.success("Test Message"))
             val body = response()
             body shouldBe "Test Message"
         }
 
         it("should return null for NetworkResponse.Error.ServerError") {
-            val response = NetworkResponse.Error.ServerError(null, null)
+            val response = NetworkResponse.Error.ServerError<String, String>(null, null)
             val body = response()
             body shouldBe null
         }
 
         it("should return null for NetworkResponse.Error.NetworkError") {
-            val response = NetworkResponse.Error.NetworkError(IOException())
+            val response = NetworkResponse.Error.NetworkError<String, String>(IOException())
             val body = response()
             body shouldBe null
         }
 
         it("should return null for NetworkResponse.Error.UnknownError") {
-            val response = NetworkResponse.Error.UnknownError(Exception())
+            val response = NetworkResponse.Error.UnknownError<String, String>(Exception())
             val body = response()
             body shouldBe null
         }
@@ -50,10 +50,12 @@ class ExtensionsTest : DescribeSpec({
         val service = retrofit.create(ExecuteWithRetryService::class.java)
 
         beforeContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.start()
         }
 
         afterContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.close()
         }
 
@@ -68,7 +70,7 @@ class ExtensionsTest : DescribeSpec({
                 service.getTextAsync().await()
             }
 
-            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
             response.body shouldBe "Hi!"
         }
 
@@ -83,7 +85,7 @@ class ExtensionsTest : DescribeSpec({
                 service.getText()
             }
 
-            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
             response.body shouldBe "Hi!"
         }
     }

@@ -63,10 +63,12 @@ class NetworkResponseAdapterTest : DescribeSpec({
         val service = retrofit.create(NetworkResponseAdapterService::class.java)
 
         beforeContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.start()
         }
 
         afterContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.close()
         }
 
@@ -79,7 +81,7 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
             response.body shouldBe "Test Message"
         }
 
@@ -92,8 +94,20 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
             response.body shouldBe "Not Found"
+        }
+
+        it("should handle 200 (with body) and 204 (no body) responses correctly") {
+            server.enqueue(MockResponse().setBody("Test Message").setResponseCode(200))
+            val response = service.getText()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.body shouldBe "Test Message"
+
+            server.enqueue(MockResponse().setResponseCode(204))
+            val noBodyResponse = service.getText()
+            noBodyResponse.shouldBeInstanceOf<NetworkResponse.Success<Unit, String>>()
+            noBodyResponse.body shouldBe Unit
         }
 
         it("should return network error response as NetworkResponse.Error.NetworkError") {
@@ -102,7 +116,7 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.Error.NetworkError>()
+            response.shouldBeInstanceOf<NetworkResponse.Error.NetworkError<String, String>>()
             response.error.shouldBeInstanceOf<IOException>()
         }
     }

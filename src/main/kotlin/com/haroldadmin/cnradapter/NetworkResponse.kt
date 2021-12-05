@@ -31,10 +31,10 @@ public sealed interface NetworkResponse<S, E> {
      * @param body The parsed body of the successful response.
      * @param response The un-parsed [Response] from Retrofit
      */
-    public class Success<S>(
+    public class Success<S, E>(
         public val body: S,
         public val response: Response<*>
-    ) : NetworkResponse<S, Nothing> {
+    ) : NetworkResponse<S, E> {
         /**
          * The status code returned by the server.
          *
@@ -56,43 +56,50 @@ public sealed interface NetworkResponse<S, E> {
      * The result of a failed network request.
      */
     public sealed interface Error<S, E> : NetworkResponse<S, E> {
+        public val body: E?
+        public val error: Throwable?
+
         /**
          * The result of a non 2xx response to a network request
          */
-        public class ServerError<E>(
-            public val body: E?,
+        public data class ServerError<S, E>(
+            public override val body: E?,
             public val response: Response<*>?,
-        ) : Error<Nothing, E> {
+        ) : Error<S, E> {
             /**
              * The status code returned by the server.
              *
              * Alias for [Response.code] of the original response
              */
-            public val code: Int?
-                get() = response?.code()
+            public val code: Int? = response?.code()
 
             /**
              * The headers returned by the server.
              *
              * Alias for [Response.headers] of the original response
              */
-            public val headers: Headers?
-                get() = response?.headers()
+            public val headers: Headers? = response?.headers()
+
+            override val error: Throwable? = null
         }
 
         /**
          * The result of a network connectivity error
          */
-        public class NetworkError(
-            public val error: IOException,
-        ) : Error<Nothing, Nothing>
+        public data class NetworkError<S, E>(
+            public override val error: IOException,
+        ) : Error<S, E> {
+            override val body: E? = null
+        }
 
         /**
          * Result of an unknown error during a network request
          * (e.g. Serialization errors)
          */
-        public class UnknownError(
-            public val error: Throwable
-        ) : Error<Nothing, Nothing>
+        public data class UnknownError<S, E>(
+            public override val error: Throwable
+        ) : Error<S, E> {
+            override val body: E? = null
+        }
     }
 }

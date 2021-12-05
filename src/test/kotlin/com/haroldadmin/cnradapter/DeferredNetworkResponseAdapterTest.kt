@@ -48,6 +48,7 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             callAdapter.shouldBeInstanceOf<CallAdapter<String, Deferred<NetworkResponse<String, String>>>>()
 
             val adaptedCall = callAdapter.adapt(retrofitCall)
+            @Suppress("DeferredResultUnused")
             adaptedCall.shouldBeInstanceOf<Deferred<NetworkResponse<String, String>>>()
         }
     }
@@ -62,10 +63,12 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
         val service = retrofit.create(DeferredNetworkResponseService::class.java)
 
         beforeContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.start()
         }
 
         afterContainer {
+            @Suppress("BlockingMethodInNonBlockingContext")
             server.close()
         }
 
@@ -78,7 +81,7 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getTextAsync().await()
-            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
             response.body shouldBe "Test Message"
         }
 
@@ -91,8 +94,20 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getTextAsync().await()
-            response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
             response.body shouldBe "Not Found"
+        }
+
+        it("should handle 200 (with body) and 204 (no body) responses correctly") {
+            server.enqueue(MockResponse().setBody("Test Message").setResponseCode(200))
+            val response = service.getTextAsync().await()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.body shouldBe "Test Message"
+
+            server.enqueue(MockResponse().setResponseCode(204))
+            val noBodyResponse = service.getTextAsync().await()
+            noBodyResponse.shouldBeInstanceOf<NetworkResponse.Success<Unit, String>>()
+            noBodyResponse.body shouldBe Unit
         }
 
         it("should return network error response as NetworkResponse.Error.NetworkError") {
@@ -101,7 +116,7 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getTextAsync().await()
-            response.shouldBeInstanceOf<NetworkResponse.Error.NetworkError>()
+            response.shouldBeInstanceOf<NetworkResponse.Error.NetworkError<String, String>>()
             response.error.shouldBeInstanceOf<IOException>()
         }
     }
