@@ -60,10 +60,6 @@ internal fun <S, E> Response<S>.toNetworkResponse(
             return NetworkResponse.Success<Unit, E>(Unit, this) as NetworkResponse<S, E>
         }
 
-        if (code() == STATUS_NO_CONTENT) {
-            return NetworkResponse.Success<Unit, E>(Unit, this) as NetworkResponse<S, E>
-        }
-
         return NetworkResponse.Error.ServerError(null, this)
     }
 

@@ -106,8 +106,8 @@ class NetworkResponseAdapterTest : DescribeSpec({
 
             server.enqueue(MockResponse().setResponseCode(204))
             val noBodyResponse = service.getText()
-            noBodyResponse.shouldBeInstanceOf<NetworkResponse.Success<Unit, String>>()
-            noBodyResponse.body shouldBe Unit
+            noBodyResponse.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
+            noBodyResponse.body shouldBe null
         }
 
         it("should return network error response as NetworkResponse.Error.NetworkError") {
