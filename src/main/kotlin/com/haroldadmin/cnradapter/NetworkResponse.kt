@@ -35,7 +35,7 @@ public sealed interface NetworkResponse<S, E> {
      * @param body The parsed body of the successful response.
      * @param response The original [Response] from Retrofit
      */
-    public class Success<S, E>(
+    public data class Success<S, E>(
         public val body: S,
         public val response: Response<*>
     ) : NetworkResponse<S, E> {
