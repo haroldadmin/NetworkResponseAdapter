@@ -143,7 +143,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
         val response = app.getLaunch(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
         response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
@@ -161,7 +161,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -177,7 +177,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -192,7 +192,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
 
         val response = app.getLaunchWithFailure(invalidFlightNumber)
-        response.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -225,7 +225,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsync(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
         response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
@@ -242,7 +242,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsyncInvalid(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -258,7 +258,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsyncInvalid(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<*, *>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<*, *>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 

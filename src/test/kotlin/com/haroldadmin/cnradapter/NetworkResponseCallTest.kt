@@ -101,7 +101,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
@@ -114,7 +114,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.NetworkError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.NetworkError<String, String>>()
         }
 
         it("should parse an unknown exception as NetworkResponse.UnknownError") {
@@ -126,7 +126,7 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Error.UnknownError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.UnknownError<String, String>>()
         }
     }
 })

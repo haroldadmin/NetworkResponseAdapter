@@ -8,13 +8,15 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 /**
- * A Call Adapter Factory for Retrofit service methods that return `NetworkResponse`
- * or `Deferred<NetworkResponse>`.
+ * A Call Adapter Factory for Retrofit service methods that return `NetworkResponse<S, E>`
+ * or `Deferred<NetworkResponse<S, E>>`.
  *
  * For the `returnType` parameter of [NetworkResponseAdapterFactory.get] we expect to
  * receive either a `Call<NetworkResponse<..., ...>>` (for suspending functions) or a
- * `Deferred<NetworkResponse<...,...>>` (for deferred functions). Bare `NetworkResponse<..., ...>`
- * or other return types are not supported, and produce a `null` result.
+ * `Deferred<NetworkResponse<...,...>>` (for deferred functions).
+ *
+ * Bare `NetworkResponse<..., ...>` or other return types are not supported, and produce a
+ * `null` result.
  */
 public class NetworkResponseAdapterFactory : CallAdapter.Factory() {
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {

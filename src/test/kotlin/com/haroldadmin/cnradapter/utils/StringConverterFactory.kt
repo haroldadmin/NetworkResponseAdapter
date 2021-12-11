@@ -14,8 +14,14 @@ internal class StringConverterFactory : Converter.Factory() {
         type: Type?,
         annotations: Array<Annotation>?,
         retrofit: Retrofit?
-    ): Converter<ResponseBody, *> {
-        return Converter<ResponseBody, String> { value -> value.string() }
+    ): Converter<ResponseBody, String>? {
+        if (type !== String::class.java) {
+            return null
+        }
+
+        return Converter<ResponseBody, String> { value ->
+            value.string()
+        }
     }
 
     override fun requestBodyConverter(
@@ -23,7 +29,11 @@ internal class StringConverterFactory : Converter.Factory() {
         parameterAnnotations: Array<Annotation>?,
         methodAnnotations: Array<Annotation>?,
         retrofit: Retrofit?
-    ): Converter<*, RequestBody> {
+    ): Converter<String, RequestBody>? {
+        if (type !== String::class.java) {
+            return null
+        }
+
         return Converter<String, RequestBody> { value -> value.toRequestBody("text/plain".toMediaTypeOrNull()) }
     }
 }

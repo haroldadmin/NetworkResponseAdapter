@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Deferred
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
@@ -12,6 +13,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import java.io.IOException
+import java.time.Duration
 
 class ExtensionsTest : DescribeSpec({
     context("Overloaded Invoke Operator") {
@@ -21,32 +23,37 @@ class ExtensionsTest : DescribeSpec({
             body shouldBe "Test Message"
         }
 
-        it("should return null for NetworkResponse.Error.ServerError") {
-            val response = NetworkResponse.Error.ServerError<String, String>(null, null)
+        it("should return null for NetworkResponse.ServerError") {
+            val response = NetworkResponse.ServerError<String, String>(null, null)
             val body = response()
             body shouldBe null
         }
 
-        it("should return null for NetworkResponse.Error.NetworkError") {
-            val response = NetworkResponse.Error.NetworkError<String, String>(IOException())
+        it("should return null for NetworkResponse.NetworkError") {
+            val response = NetworkResponse.NetworkError<String, String>(IOException())
             val body = response()
             body shouldBe null
         }
 
-        it("should return null for NetworkResponse.Error.UnknownError") {
-            val response = NetworkResponse.Error.UnknownError<String, String>(Exception())
+        it("should return null for NetworkResponse.UnknownError") {
+            val response = NetworkResponse.UnknownError<String, String>(Exception())
             val body = response()
             body shouldBe null
         }
     }
 
     describe("Execute with retry") {
+        val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(100)).build()
+
         val server = MockWebServer()
+
         val retrofit = Retrofit.Builder()
             .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(StringConverterFactory())
+            .client(client)
             .baseUrl(server.url("/"))
             .build()
+
         val service = retrofit.create(ExecuteWithRetryService::class.java)
 
         beforeContainer {
@@ -66,7 +73,7 @@ class ExtensionsTest : DescribeSpec({
 
             server.enqueue(MockResponse().setBody("Hi!"))
 
-            val response = executeWithRetry(times = 10) {
+            val response = executeWithRetry(times = 10, initialDelay = 100, maxDelay = 200) {
                 service.getTextAsync().await()
             }
 
@@ -81,7 +88,7 @@ class ExtensionsTest : DescribeSpec({
 
             server.enqueue(MockResponse().setBody("Hi!"))
 
-            val response = executeWithRetry(times = 10) {
+            val response = executeWithRetry(times = 10, initialDelay = 100, maxDelay = 200) {
                 service.getText()
             }
 

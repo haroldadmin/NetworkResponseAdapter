@@ -40,7 +40,6 @@ fun main() = runBlocking {
         when (val postResponse = service.getPost(i)) {
             is NetworkResponse.Error -> println("Failed to get post: $postResponse")
             is NetworkResponse.Success -> {
-                postResponse.response.raw().body?.string()
                 println(Json.encodeToString(postResponse.body))
             }
         }
@@ -59,13 +58,13 @@ fun main() = runBlocking {
         println("Creating Post $i")
         val createPostParams = CreatePostParams("CNR Post $i", "Test Post", i)
         when (val createResponse = service.createPost(createPostParams)) {
-            is NetworkResponse.Error.NetworkError -> {
+            is NetworkResponse.NetworkError -> {
                 println("Network connectivity error: ${createResponse.error.message}")
             }
-            is NetworkResponse.Error.ServerError -> {
+            is NetworkResponse.ServerError -> {
                 println("Server error: ${createResponse.code}")
             }
-            is NetworkResponse.Error.UnknownError -> {
+            is NetworkResponse.UnknownError -> {
                 println("Unknown error: ${createResponse.error}")
             }
             is NetworkResponse.Success -> {
@@ -74,6 +73,4 @@ fun main() = runBlocking {
             }
         }
     }
-
-    println(service.getPostWithError(1))
 }

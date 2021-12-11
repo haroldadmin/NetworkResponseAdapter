@@ -7,7 +7,7 @@ import retrofit2.*
 import java.lang.reflect.Type
 
 /**
- * A Retrofit [CallAdapter] to convert `Call<S>` to `NetworkResponse<S, E>`.
+ * A Retrofit [CallAdapter] for `Deferred<NetworkResponse<S, E>>`.
  *
  * @param S The type of the successful response model
  * @param E The type of the error response model
@@ -36,12 +36,12 @@ internal class DeferredNetworkResponseAdapter<S, E>(
 
         call.enqueue(object : Callback<S> {
             override fun onResponse(call: Call<S>, response: Response<S>) {
-                val networkResponse = response.toNetworkResponse(successType, errorConverter)
+                val networkResponse = response.asNetworkResponse(successType, errorConverter)
                 deferred.complete(networkResponse)
             }
 
             override fun onFailure(call: Call<S>, t: Throwable) {
-                val networkResponse = t.toNetworkResponse<S, E>(successType, errorConverter)
+                val networkResponse = t.asNetworkResponse<S, E>(successType, errorConverter)
                 deferred.complete(networkResponse)
             }
         })

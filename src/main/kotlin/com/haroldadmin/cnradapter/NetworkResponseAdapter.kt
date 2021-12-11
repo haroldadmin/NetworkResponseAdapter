@@ -6,6 +6,11 @@ import retrofit2.CallAdapter
 import retrofit2.Converter
 import java.lang.reflect.Type
 
+/**
+ * A [CallAdapter] for `NetworkResponse<S, E>`.
+ *
+ * Delegates most of its functionality to a [NetworkResponseCall].
+ */
 internal class NetworkResponseAdapter<S : Any, E : Any>(
     private val successType: Type,
     private val errorBodyConverter: Converter<ResponseBody, E>

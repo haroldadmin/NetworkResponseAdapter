@@ -1,6 +1,7 @@
 package com.haroldadmin.cnradapter
 
 import com.haroldadmin.cnradapter.utils.CompletableCall
+import com.haroldadmin.cnradapter.utils.CrashyObjectConverterFactory
 import com.haroldadmin.cnradapter.utils.StringConverterFactory
 import com.haroldadmin.cnradapter.utils.typeOf
 import io.kotest.core.spec.style.DescribeSpec
@@ -8,12 +9,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Deferred
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
 import retrofit2.*
 import retrofit2.http.GET
 import java.io.IOException
+import java.time.Duration
 
 class DeferredNetworkResponseAdapterTest : DescribeSpec({
     describe(DeferredNetworkResponseAdapter::class.java.simpleName) {
@@ -54,12 +57,18 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
     }
 
     describe("E2E: ${DeferredNetworkResponseAdapter::class.java.simpleName}") {
+        val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(100)).build()
+
         val server = MockWebServer()
+
         val retrofit = Retrofit.Builder()
             .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(StringConverterFactory())
+            .addConverterFactory(CrashyObjectConverterFactory())
+            .client(client)
             .baseUrl(server.url("/"))
             .build()
+
         val service = retrofit.create(DeferredNetworkResponseService::class.java)
 
         beforeContainer {
@@ -85,7 +94,7 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             response.body shouldBe "Test Message"
         }
 
-        it("should return server error response as NetworkResponse.Error.ServerError") {
+        it("should return server error response as NetworkResponse.ServerError") {
             server.enqueue(
                 MockResponse()
                     .setResponseCode(404)
@@ -94,7 +103,7 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getTextAsync().await()
-            response.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
             response.body shouldBe "Not Found"
         }
 
@@ -106,17 +115,17 @@ class DeferredNetworkResponseAdapterTest : DescribeSpec({
 
             server.enqueue(MockResponse().setResponseCode(204))
             val noBodyResponse = service.getTextAsync().await()
-            noBodyResponse.shouldBeInstanceOf<NetworkResponse.Error.ServerError<String, String>>()
+            noBodyResponse.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
             noBodyResponse.body shouldBe null
         }
 
-        it("should return network error response as NetworkResponse.Error.NetworkError") {
+        it("should return network error response as NetworkResponse.NetworkError") {
             server.enqueue(
                 MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AFTER_REQUEST)
             )
 
             val response = service.getTextAsync().await()
-            response.shouldBeInstanceOf<NetworkResponse.Error.NetworkError<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.NetworkError<String, String>>()
             response.error.shouldBeInstanceOf<IOException>()
         }
     }

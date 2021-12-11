@@ -25,7 +25,7 @@ public suspend inline fun <T : Any, U : Any> executeWithRetry(
     var currentDelay = initialDelay
     repeat(times - 1) {
         when (val response = block()) {
-            is NetworkResponse.Error.NetworkError -> {
+            is NetworkResponse.NetworkError -> {
                 delay(currentDelay)
                 currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
             }

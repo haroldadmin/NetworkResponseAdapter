@@ -9,6 +9,10 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.lang.reflect.Type
 
+/**
+ * A custom [Call] that wraps a regular Retrofit call and adapts the
+ * response to a [NetworkResponse]
+ */
 internal class NetworkResponseCall<S, E>(
     private val backingCall: Call<S>,
     private val errorConverter: Converter<ResponseBody, E>,
@@ -18,12 +22,12 @@ internal class NetworkResponseCall<S, E>(
     override fun enqueue(callback: Callback<NetworkResponse<S, E>>) = synchronized(this) {
         backingCall.enqueue(object : Callback<S> {
             override fun onResponse(call: Call<S>, response: Response<S>) {
-                val networkResponse = response.toNetworkResponse(successBodyType, errorConverter)
+                val networkResponse = response.asNetworkResponse(successBodyType, errorConverter)
                 callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
             }
 
             override fun onFailure(call: Call<S>, throwable: Throwable) {
-                val networkResponse = throwable.toNetworkResponse<S, E>(successBodyType, errorConverter)
+                val networkResponse = throwable.asNetworkResponse<S, E>(successBodyType, errorConverter)
                 callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
             }
         })
@@ -49,7 +53,7 @@ internal class NetworkResponseCall<S, E>(
 
     override fun execute(): Response<NetworkResponse<S, E>> {
         val retrofitResponse = backingCall.execute()
-        val networkResponse = retrofitResponse.toNetworkResponse(successBodyType, errorConverter)
+        val networkResponse = retrofitResponse.asNetworkResponse(successBodyType, errorConverter)
         return Response.success(networkResponse)
     }
 
