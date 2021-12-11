@@ -64,6 +64,5 @@ dependencies {
 tasks.dokkaGfm.configure {
     moduleName.set(ProjectName)
     moduleVersion.set(ProjectVersion)
-    this.description
     outputDirectory.set(buildDir.resolve("dokka"))
 }
