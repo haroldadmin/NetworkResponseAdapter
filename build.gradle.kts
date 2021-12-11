@@ -2,10 +2,15 @@ import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
     kotlin("jvm") version "1.6.0"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.6.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
     `maven-publish`
 }
+
+val GroupID = "com.github.haroldadmin"
+val ArtifactID = "NetworkResponseAdapter"
+val ProjectName = "NetworkResponseAdapter"
+val ProjectVersion = "5.0.0"
 
 repositories {
     mavenCentral()
@@ -28,9 +33,9 @@ configure<KtlintExtension> {
 publishing {
     publications {
         create<MavenPublication>("NetworkResponseAdapter") {
-            groupId = "com.github.haroldadmin"
-            artifactId = "NetworkResponseAdapter"
-            version = "5.0.0"
+            groupId = GroupID
+            artifactId = ArtifactID
+            version = ProjectVersion
 
             from(components["java"])
         }
@@ -57,5 +62,8 @@ dependencies {
 }
 
 tasks.dokkaGfm.configure {
+    moduleName.set(ProjectName)
+    moduleVersion.set(ProjectVersion)
+    this.description
     outputDirectory.set(buildDir.resolve("dokka"))
 }
