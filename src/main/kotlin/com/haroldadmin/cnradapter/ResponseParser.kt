@@ -14,7 +14,6 @@ import java.lang.reflect.Type
  * @param errorConverter Retrofit provided body converter to parse the error body of the response
  * @return A subtype of [NetworkResponse] based on the response of the network request
  */
-@Suppress("UNCHECKED_CAST")
 internal fun <S, E> Response<S>.asNetworkResponse(
     successType: Type,
     errorConverter: Converter<ResponseBody, E>
