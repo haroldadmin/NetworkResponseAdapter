@@ -1,0 +1,35 @@
+$dokka.format:gfm-v1
+$dokka.linkExtension:md
+$dokka.location:com.haroldadmin.cnradapter////PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/index.md
+$dokka.location:com.haroldadmin.cnradapter//executeWithRetry/#kotlin.Int#kotlin.Long#kotlin.Long#kotlin.Double#kotlin.coroutines.SuspendFunction0[com.haroldadmin.cnradapter.NetworkResponse[TypeParam(bounds=[kotlin.Any]),TypeParam(bounds=[kotlin.Any])]]/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/execute-with-retry.md
+$dokka.location:com.haroldadmin.cnradapter//invoke/com.haroldadmin.cnradapter.NetworkResponse[TypeParam(bounds=[kotlin.Any]),TypeParam(bounds=[kotlin.Any])]#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/invoke.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Error///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-error/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Error/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-error/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Error/error/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-error/error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.NetworkError///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-network-error/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.NetworkError/NetworkError/#java.io.IOException/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-network-error/-network-error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.NetworkError/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-network-error/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.NetworkError/error/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-network-error/error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/ServerError/#TypeParam(bounds=[kotlin.Any?])?#retrofit2.Response[*]?/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/-server-error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/code/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/code.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/error/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/headers/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/headers.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.ServerError/response/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-server-error/response.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/Success/#TypeParam(bounds=[kotlin.Any?])#retrofit2.Response[*]/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/-success.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/code/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/code.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/headers/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/headers.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/response/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/response.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/UnknownError/#kotlin.Throwable/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/-unknown-error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/error/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponseAdapterFactory///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response-adapter-factory/index.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponseAdapterFactory/NetworkResponseAdapterFactory/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response-adapter-factory/-network-response-adapter-factory.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponseAdapterFactory/get/#java.lang.reflect.Type#kotlin.Array[kotlin.Annotation]#retrofit2.Retrofit/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response-adapter-factory/get.md
+com.haroldadmin.cnradapter
+
