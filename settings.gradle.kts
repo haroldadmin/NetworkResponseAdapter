@@ -12,6 +12,6 @@ rootProject.name = "coroutines-network-response-adapter"
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
     }
 }
+include("sample")

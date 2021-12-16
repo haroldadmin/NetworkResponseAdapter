@@ -9,7 +9,11 @@ import retrofit2.Converter
 import retrofit2.Response
 import java.lang.reflect.Type
 
-internal class NetworkResponseCall<S : Any, E : Any>(
+/**
+ * A custom [Call] that wraps a regular Retrofit call and adapts the
+ * response to a [NetworkResponse]
+ */
+internal class NetworkResponseCall<S, E>(
     private val backingCall: Call<S>,
     private val errorConverter: Converter<ResponseBody, E>,
     private val successBodyType: Type
@@ -18,12 +22,12 @@ internal class NetworkResponseCall<S : Any, E : Any>(
     override fun enqueue(callback: Callback<NetworkResponse<S, E>>) = synchronized(this) {
         backingCall.enqueue(object : Callback<S> {
             override fun onResponse(call: Call<S>, response: Response<S>) {
-                val networkResponse = ResponseHandler.handle(response, successBodyType, errorConverter)
+                val networkResponse = response.asNetworkResponse(successBodyType, errorConverter)
                 callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
             }
 
             override fun onFailure(call: Call<S>, throwable: Throwable) {
-                val networkResponse = throwable.extractNetworkResponse<S, E>(errorConverter)
+                val networkResponse = throwable.asNetworkResponse<S, E>(successBodyType, errorConverter)
                 callback.onResponse(this@NetworkResponseCall, Response.success(networkResponse))
             }
         })
@@ -48,7 +52,9 @@ internal class NetworkResponseCall<S : Any, E : Any>(
     }
 
     override fun execute(): Response<NetworkResponse<S, E>> {
-        throw UnsupportedOperationException("Network Response call does not support synchronous execution")
+        val retrofitResponse = backingCall.execute()
+        val networkResponse = retrofitResponse.asNetworkResponse(successBodyType, errorConverter)
+        return Response.success(networkResponse)
     }
 
     override fun request(): Request = backingCall.request()

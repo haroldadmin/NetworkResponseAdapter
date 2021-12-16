@@ -1,13 +1,14 @@
 package com.haroldadmin.cnradapter
 
+import com.haroldadmin.cnradapter.utils.resourceFileContents
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.kotlintest.matchers.string.shouldContain
-import io.kotlintest.matchers.types.shouldBeInstanceOf
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.AnnotationSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
@@ -89,185 +90,207 @@ internal class TestApplication(
     }
 }
 
-internal class MoshiApplicationTest: AnnotationSpec() {
+class MoshiApplicationTest : DescribeSpec({
+    val server = MockWebServer()
 
-    private val moshi = Moshi.Builder()
+    val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    private val server = MockWebServer()
-
-    private val retrofit = Retrofit.Builder()
+    val retrofit = Retrofit.Builder()
         .addCallAdapterFactory(NetworkResponseAdapterFactory())
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .baseUrl(server.url("/"))
         .build()
 
-    private val service = retrofit.create(LaunchesService::class.java)
+    val service = retrofit.create(LaunchesService::class.java)
 
-    private val validFlightNumber = 1L
-    private val invalidFlightNumber = -1L
+    val validFlightNumber = 1L
+    val invalidFlightNumber = -1L
 
-    @Test
-    fun shouldParseSuccessResponseSuccessfully() {
+    beforeContainer {
+        @Suppress("BlockingMethodInNonBlockingContext")
+        server.start()
+    }
+
+    afterContainer {
+        @Suppress("BlockingMethodInNonBlockingContext")
+        server.close()
+    }
+
+    it("should parse success response successfully") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/falconsat_launch.json"))
-            setResponseCode(200)
-        })
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/falconsat_launch.json"))
+                setResponseCode(200)
+            }
+        )
         val response = app.getLaunch(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Launch>>()
-        response as NetworkResponse.Success
+        response.shouldBeInstanceOf<NetworkResponse.Success<Launch, GenericErrorResponse>>()
         response.body.name shouldContain "FalconSat"
         response.code shouldBe 200
     }
 
-    @Test
-    fun shouldParseErrorResponseSuccessfully() {
+    it("should parse error response successfully") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/error_response.json"))
-            setResponseCode(404)
-        })
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/error_response.json"))
+                setResponseCode(404)
+            }
+        )
         val response = app.getLaunch(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
-        response as NetworkResponse.ServerError
-        response.body!!.error shouldContain "Not Found"
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
+        response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
 
-    @Test
-    fun shouldFailOnParsingExceptionsOfSuccessResponse() {
+    it("should fail on parsing exceptions of success response") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/falconsat_launch.json"))
-            setResponseCode(200)
-            setHeader("test", "true")
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/falconsat_launch.json"))
+                setResponseCode(200)
+                setHeader("test", "true")
+            }
+        )
+
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
-        response as NetworkResponse.UnknownError
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
-        response.code shouldBe null
-        response.headers shouldBe null
     }
 
-    @Test
-    fun shouldParseResponseCodeAndHeadersOfUnsuccessfulRequestWithInvalidBodyCorrectly() {
+    it("should parse response code and headers of unsuccessful request with invalid body correctly") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody("""{ "message": "Too many requests!" }""")
-            setResponseCode(429)
-            setHeader("test", "true")
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody("""{ "message": "Too many requests!" }""")
+                setResponseCode(429)
+                setHeader("test", "true")
+            }
+        )
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
-        response as NetworkResponse.UnknownError
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
-        response.code shouldBe 429
-        response.headers!!["test"] shouldBe "true"
     }
 
-    @Test
-    fun shouldFailOnParsingExceptionsOfErrorResponse() {
+    it("should fail on parsing exceptions of ErrorResponse") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/error_response.json"))
-            setResponseCode(404)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/error_response.json"))
+                setResponseCode(404)
+            }
+        )
+
         val response = app.getLaunchWithFailure(invalidFlightNumber)
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
-        response as NetworkResponse.UnknownError
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
-    @Test
-    fun `should parse successful response successfully when using deferred`() {
+    it("should parse successful response successfully when using deferred") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/falconsat_launch.json"))
-            setResponseCode(200)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/falconsat_launch.json"))
+                setResponseCode(200)
+            }
+        )
+
         val response = app.getLaunchAsync(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Launch>>()
-        response as NetworkResponse.Success
+        response.shouldBeInstanceOf<NetworkResponse.Success<Launch, GenericErrorResponse>>()
         response.body.name shouldContain "FalconSat"
         response.code shouldBe 200
     }
 
-    @Test
-    fun `should parse error response successfully when using deferred`() {
+    it("should parse error response successfully when using deferred") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/error_response.json"))
-            setResponseCode(404)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/error_response.json"))
+                setResponseCode(404)
+            }
+        )
+
         val response = app.getLaunchAsync(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
-        response as NetworkResponse.ServerError
-        response.body!!.error shouldContain "Not Found"
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
+        response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
 
-    @Test
-    fun `should convert parsing errors for success response to NetworkResponse-UnknownError when using deferred`() {
+    it("should convert parsing errors for success response to NetworkResponse-UnknownError when using deferred") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/falconsat_launch.json"))
-            setResponseCode(200)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/falconsat_launch.json"))
+                setResponseCode(200)
+            }
+        )
+
         val response = app.getLaunchAsyncInvalid(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
-        response as NetworkResponse.UnknownError
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
-    @Test
-    fun `should convert parsing errors for error response to NetworkResponse-UnknownError when using deferred`() {
+    it("should convert parsing errors for error response to NetworkResponse-UnknownError when using deferred") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setBody(resourceFileContents("/error_response.json"))
-            setResponseCode(200)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setBody(resourceFileContents("/error_response.json"))
+                setResponseCode(200)
+            }
+        )
+
         val response = app.getLaunchAsyncInvalid(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
-        response as NetworkResponse.UnknownError
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError<*, *>>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
-    @Test
-    fun `should parse empty body as Unit`() {
+    it("should parse empty body as Unit") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setResponseCode(204)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setResponseCode(204)
+            }
+        )
+
         val response = app.healthCheck()
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
-        response as NetworkResponse.Success
+        response.shouldBeInstanceOf<NetworkResponse.Success<Unit, GenericErrorResponse>>()
         response.body shouldBe Unit
         response.code shouldBe 204
     }
 
-    @Test
-    fun `should parse empty body as Unit for deferred methods too`() {
+    it("should parse empty body as Unit for deferred methods too") {
         val app = TestApplication(service)
-        server.enqueue(MockResponse().apply {
-            setResponseCode(204)
-        })
+
+        server.enqueue(
+            MockResponse().apply {
+                setResponseCode(204)
+            }
+        )
+
         val response = app.deferredHealthCheck()
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Unit>>()
-        response as NetworkResponse.Success
+        response.shouldBeInstanceOf<NetworkResponse.Success<Unit, GenericErrorResponse>>()
         response.body shouldBe Unit
         response.code shouldBe 204
     }
-}
+})
