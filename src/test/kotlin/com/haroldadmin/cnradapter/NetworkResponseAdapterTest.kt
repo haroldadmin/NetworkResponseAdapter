@@ -1,6 +1,7 @@
 package com.haroldadmin.cnradapter
 
-import com.haroldadmin.cnradapter.utils.*
+import com.haroldadmin.cnradapter.utils.CompletableCall
+import com.haroldadmin.cnradapter.utils.CrashObjectConversionError
 import com.haroldadmin.cnradapter.utils.CrashyObject
 import com.haroldadmin.cnradapter.utils.CrashyObjectConverterFactory
 import com.haroldadmin.cnradapter.utils.StringConverterFactory
