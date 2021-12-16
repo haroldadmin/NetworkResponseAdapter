@@ -15,11 +15,11 @@ a `NetworkResponse` type.
 
 `NetworkResponse<S, E>` is a Kotlin sealed interface with the following states:
 
-1. Success: Represents successful network calls (2xx response codes)
-2. Error: Represents unsuccessful network calls
-    1. ServerError: Server errors (non 2xx responses)
-    2. NetworkError: IO Errors, connectivity problems
-    3. UnknownError: Any other errors, like serialization exceptions
+- `Success`: Represents successful network calls (2xx response codes)
+- `Error`: Represents unsuccessful network calls
+   - `ServerError`: Server errors (non 2xx responses)
+   - `NetworkError`: IO Errors, connectivity problems
+   - `UnknownError`: Any other errors, like serialization exceptions
 
 It is generic on two types: a success response (`S`), and an error response (`E`).
 
