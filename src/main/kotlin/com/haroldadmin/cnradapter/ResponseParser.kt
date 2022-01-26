@@ -48,7 +48,7 @@ private fun <S, E> parseUnsuccessfulResponse(
         val convertedBody = errorConverter.convert(errorBody)
         NetworkResponse.ServerError(convertedBody, response)
     } catch (error: Throwable) {
-        NetworkResponse.UnknownError(error)
+        NetworkResponse.UnknownError(error, response)
     }
 }
 
@@ -98,6 +98,6 @@ internal fun <S, E> Throwable.asNetworkResponse(
                 response.asNetworkResponse(successType, errorConverter) as NetworkResponse<S, E>
             }
         }
-        else -> NetworkResponse.UnknownError(this)
+        else -> NetworkResponse.UnknownError(this, null)
     }
 }

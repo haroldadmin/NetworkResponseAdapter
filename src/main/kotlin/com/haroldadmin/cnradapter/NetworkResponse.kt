@@ -123,12 +123,27 @@ public sealed interface NetworkResponse<S, E> {
      * (e.g. Serialization errors)
      */
     public data class UnknownError<S, E>(
-        public override val error: Throwable
+        public override val error: Throwable,
+        public val response: Response<*>?
     ) : Error<S, E> {
         /**
          * Always `null` for an [UnknownError]
          */
         override val body: E? = null
+
+        /**
+         * The status code returned by the server.
+         *
+         * Alias for [Response.code] of the original response
+         */
+        public val code: Int? = response?.code()
+
+        /**
+         * The headers returned by the server.
+         *
+         * Alias for [Response.headers] of the original response
+         */
+        public val headers: Headers? = response?.headers()
     }
 }
 
