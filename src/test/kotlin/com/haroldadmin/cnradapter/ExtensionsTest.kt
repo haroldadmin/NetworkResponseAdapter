@@ -36,7 +36,7 @@ class ExtensionsTest : DescribeSpec({
         }
 
         it("should return null for NetworkResponse.UnknownError") {
-            val response = NetworkResponse.UnknownError<String, String>(Exception())
+            val response = NetworkResponse.UnknownError<String, String>(Exception(), null)
             val body = response()
             body shouldBe null
         }
