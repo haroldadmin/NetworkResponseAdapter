@@ -24,6 +24,7 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
   - admonition
+  - mdx_truly_sane_lists
 
 plugins:
   - search
@@ -33,6 +34,7 @@ nav:
       - Introduction: ./index.md
       - Extensions: ./extensions.md
       - Special Cases: ./special-cases.md
-      - Benefits: ./benefits.md
+  - Upgrade Guides:
+      - v5: ./upgrade-guides/v5.md
   - API Reference:
       - ./api/index.md

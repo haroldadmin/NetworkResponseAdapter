@@ -2,10 +2,29 @@
 
 ## Handling empty response bodies
 
-This library assumes that your server returns a parse-able response body even if the request fails. Empty bodies are treated as a server error. However, some operations rely solely on the returned response code. In such cases, the body is usually empty. Such endpoints must use `Unit` as the response type:
+Some operations rely solely on the returned response code. In such cases, the body is usually empty. Use `Unit` as the response type for such APIs:
 
 ```kotlin
 suspend fun updateStatusOnServer(): NetworkResponse<Unit, ErrorType>
+```
+
+If your server sometimes returns a body and sometimes doesn't (200 vs 204 status code), then consider using the bundled raw Retrofit response.
+
+```kotlin
+interface PostsService {
+  @GET("/")
+  suspend fun getPost(): NetworkResponse<Unit, ErrorResponse>
+}
+
+when (val postResponse  = service.getPost()) {
+  is NetworkResponse.Success -> {
+    if (postResponse.code != 204) {
+      val rawBody = postResponse.response.rawBody()
+      // Manually parse the raw body to access the response
+    }
+  }
+  is NetworkResponse.Error -> { ... }
+}
 ```
 
 ## Handling primitive responses
@@ -32,18 +51,14 @@ val retrofit = Retrofit.Builder()
  .build()
 ```
 
-## Status code and Headers in `NetworkResponse.UnknownError`
+## Raw Retrofit Responses
 
-Network requests that result in a `NetworkResponse.UnknownError` can still convey useful information through their headers and status code. Unfortunately, it is not always possible to extract these values from a failed request.
-
-Therefore, the `NetworkResponse.UnknownError` class contains nullable fields for the status code and headers. These fields are populated if their values can be extract from a failed request.
+Responses of type `NetworkResponse.Success`, `NetworkResponse.ServerError` and `NetworkResponse.UnknownError` are bundled with the raw Retrofit `Response` object (if available). This allows you to interact with raw response in case you ever need it:
 
 ```kotlin
-data class UnknownError(
-    val error: Throwable,
-    val code: Int? = null,
-    val headers: Headers? = null,
-) : NetworkResponse<Nothing, Nothing>()
+when (networkResponse) {
+  is NetworkResponse.Success -> {
+    val statusCode = networkResponse.response.code()
+  }
+}
 ```
-
-It is possible to extract this information from a failed request in most cases. However, if the server responds with a successful status code (200 <= code < 300) and an invalid body (which can not be parsed correctly), Retrofit assumes the network request failed. It forwards only the raised error and the original call to the registered call adapter, and thus all information about the response is lost resulting in a `NetworkResponse.UnknownError` with null `code` and `headers`.

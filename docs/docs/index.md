@@ -5,46 +5,119 @@
 
 ## Introduction
 
-This library provides a Retrofit call adapter to handle errors as a part of state. It helps you write cleaner code for network requests by treating errors as values, instead of exceptions.
+This library provides a Kotlin Coroutines based Retrofit call adapter for wrapping your API responses in
+a `NetworkResponse` type.
+
+See [Installation](#installation) for setup instructions.
 
 ## Network Response
 
-`NetworkResponse<S, E>` is a Kotlin sealed class with the following states:
+`NetworkResponse<S, E>` is a Kotlin sealed interface with the following states:
 
-1. Success: Represents successful responses (2xx response codes)
-2. ServerError: Represents Server errors
-3. NetworkError: Represents connectivity errors
-4. UnknownError: Represents every other kind of error which can not be classified as an API error or a network problem (eg JSON deserialization exceptions)
+- `Success`: Represents successful network calls (2xx response codes)
+- `Error`: Represents unsuccessful network calls
+  - `ServerError`: Server errors (non 2xx responses)
+  - `NetworkError`: IO Errors, connectivity problems
+  - `UnknownError`: Any other errors, like serialization exceptions
 
-It is generic on two types: a response (`S`), and an error (`E`). The response type is your Java/Kotlin representation of the API response, while the error type represents the error response sent by the API.
+It is generic on two types: a success response (`S`), and an error response (`E`).
 
-## Example
+- `S`: Kotlin representation of a successful API response
+- `E`: Representation of an unsuccessful API response
 
-```kotlin
-data class DetailsResponse(
-  val details: String
-)
+## Usage
 
-data class DetailsError(
-  val errorMessage: String
-)
+Suppose an API returns the following body for a successful response:
 
-interface Api {
-  @Get("/details")
-  suspend fun details(): NetworkResponse<DetailsResponse, DetailsError>
-}
+_Successful Response_
 
-class ViewModel {
-  suspend fun fetchDetails() {
-    when (val response = api.details()) {
-      is NetworkResponse.Success -> handleSuccess(response.body)
-      is NetworkResponse.ServerError -> handleServerError(response.code)
-      is NetworkResponse.NetworkError -> handleNetworkError(response.error)
-      is NetworkResponse.UnknownError -> handleUnknownError(response.error)
-    }
-  }
+```json
+{
+  "name": "John doe",
+  "age": 21
 }
 ```
+
+And this for an unsuccessful response:
+
+_Error Response_
+
+```json
+{
+  "message": "The requested person was not found"
+}
+```
+
+You can create two data classes to model the these responses:
+
+```kotlin
+data class PersonResponse(val name: String, val age: Int)
+
+data class ErrorResponse(val message: String)
+```
+
+Then modify your Retrofit service to return a `NetworkResponse`:
+
+```kotlin
+@GET("/person")
+suspend fun getPerson(): NetworkResponse<PersonResponse, ErrorResponse>>
+
+// You can also request for `Deferred` responses
+@GET("/person")
+fun getPersonAsync(): Deferred<NetworkResponse<PersonResponse, ErrorResponse>>
+```
+
+Finally, add this call adapter factory to your Retrofit instance:
+
+```kotlin
+Retrofit.Builder()
+    .addCallAdapterFactory(NetworkResponseAdapterFactory())
+    .build()
+```
+
+And voila! You can now consume your API as:
+
+```kotlin
+// Repository.kt
+suspend fun getPerson() {
+    when (val person = apiService.getPerson()) {
+        is NetworkResponse.Success -> {
+            /* Successful response */
+        }
+        is NetworkResponse.Error -> {
+            /* Handle error */
+        }
+    }
+
+    // Or, if you care about the type of the error:
+    when (val person = apiService.getPerson()) {
+        is NetworkResponse.Success -> {
+            /* ... */
+        }
+        is NetworkResponse.ServerError -> {
+            /* ... */
+        }
+        is NetworkResponse.NetworkError -> {
+            /* ... */
+        }
+        is NetworkResponse.UnknownError -> {
+            /* ... */
+        }
+    }
+}
+```
+
+See [Special Cases](./special-cases.md) for dealing with more complicated scenarios.
+
+## Benefits
+
+Modelling errors as a part of your state is a recommended practice. This library helps you deal with scenarios where you can successfully recover from errors, and extract meaningful information from them too!
+
+- `NetworkResponseAdapter` provides a much cleaner solution than Retrofit's built in `Call` type for dealing with errors.`Call` throws an exception on any kind of an error, leaving it up to you to catch it and parse it manually to figure out what went wrong. `NetworkResponseAdapter` does all of that for you and returns the result in an easily consumable `NetworkResponse` subtype.
+
+- The RxJava retrofit adapter treats non 2xx response codes as errors, which seems silly in the context of Rx where errors terminate streams. Also, just like the `Call<T>` type, it makes you deal with all types of errors in an `onError` callback, where you have to manually parse it to find out exactly what went wrong.
+
+- Using the `Response` class provided by Retrofit is cumbersome, as you have to manually parse error bodies with it.
 
 ## Installation
 
@@ -52,33 +125,23 @@ Add the Jitpack repository to your list of repositories:
 
 ```groovy
 allprojects {
-  repositories {
-    maven { url 'https://jitpack.io' }
-  }
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
 
-Then add the dependency in your gradle file:
+And then add the dependency in your gradle file:
 
 ```groovy
 dependencies {
-  implementation "com.github.haroldadmin:NetworkResponseAdapter:(latest-version)"
+    implementation "com.github.haroldadmin:NetworkResponseAdapter:(latest-version)"
 }
 ```
 
-And finally, register `NetworkResponseAdapter` with Retrofit:
+[![Release](https://jitpack.io/v/haroldadmin/NetworkResponseAdapter.svg)](https://jitpack.io/#haroldadmin/NetworkResponseAdapter)
 
-```kotlin
-val retrofit = Retrofit.Builder()
- .addCallAdapterFactory(NetworkResponseAdapterFactory())
- ... // Other config
- .build()
-```
-
-<!-- prettier-ignore-start -->
-!!! note
-    This library uses OkHttp 4, which requires Android API version 21+ and Java 8+.
-<!-- prettier-ignore-end -->
+_This library uses OkHttp 4, which requires Android API version 21+ and Java 8+_
 
 ## License
 
