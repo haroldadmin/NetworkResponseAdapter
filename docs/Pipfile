@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 mkdocs = "~=1.2.3"
 mkdocs-material = "~=8.1.0"
+mdx-truly-sane-lists = "*"
 
 [dev-packages]
 
