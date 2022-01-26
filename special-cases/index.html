@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://haroldadmin.github.io/NetworkResponseAdapter/special-cases/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.82f3c0b9.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.6e60f8b8.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.9204c3b2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
         
           
           
@@ -183,6 +183,22 @@
     <li class="md-tabs__item">
       <a href=".." class="md-tabs__link md-tabs__link--active">
         Docs
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../upgrade-guides/v5/" class="md-tabs__link">
+        Upgrade Guides
       </a>
     </li>
   
@@ -360,8 +376,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#status-code-and-headers-in-networkresponseunknownerror" class="md-nav__link">
-    Status code and Headers in NetworkResponse.UnknownError
+  <a href="#raw-retrofit-responses" class="md-nav__link">
+    Raw Retrofit Responses
   </a>
   
 </li>
@@ -381,8 +397,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../benefits/" class="md-nav__link">
-        Benefits
+      <a href="../projects/" class="md-nav__link">
+        Projects
       </a>
     </li>
   
@@ -412,12 +428,60 @@
       
       
         <label class="md-nav__link" for="__nav_2">
+          Upgrade Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Upgrade Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Upgrade Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upgrade-guides/v5/" class="md-nav__link">
+        v5
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
           API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
+        <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -484,8 +548,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#status-code-and-headers-in-networkresponseunknownerror" class="md-nav__link">
-    Status code and Headers in NetworkResponse.UnknownError
+  <a href="#raw-retrofit-responses" class="md-nav__link">
+    Raw Retrofit Responses
   </a>
   
 </li>
@@ -509,8 +573,24 @@
 
 <h1 id="special-cases">Special Cases</h1>
 <h2 id="handling-empty-response-bodies">Handling empty response bodies</h2>
-<p>This library assumes that your server returns a parse-able response body even if the request fails. Empty bodies are treated as a server error. However, some operations rely solely on the returned response code. In such cases, the body is usually empty. Such endpoints must use <code>Unit</code> as the response type:</p>
+<p>Some operations rely solely on the returned response code. In such cases, the body is usually empty. Use <code>Unit</code> as the response type for such APIs:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">updateStatusOnServer</span><span class="p">():</span> <span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="kt">Unit</span><span class="p">,</span> <span class="n">ErrorType</span><span class="o">&gt;</span>
+</code></pre></div>
+<p>If your server sometimes returns a body and sometimes doesn't (200 vs 204 status code), then consider using the bundled raw Retrofit response.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">PostsService</span> <span class="p">{</span>
+  <span class="nd">@GET</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+  <span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">getPost</span><span class="p">():</span> <span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="kt">Unit</span><span class="p">,</span> <span class="n">ErrorResponse</span><span class="o">&gt;</span>
+<span class="p">}</span>
+
+<span class="k">when</span> <span class="p">(</span><span class="kd">val</span> <span class="nv">postResponse</span>  <span class="o">=</span> <span class="n">service</span><span class="p">.</span><span class="na">getPost</span><span class="p">())</span> <span class="p">{</span>
+  <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">postResponse</span><span class="p">.</span><span class="na">code</span> <span class="o">!=</span> <span class="m">204</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">val</span> <span class="nv">rawBody</span> <span class="o">=</span> <span class="n">postResponse</span><span class="p">.</span><span class="na">response</span><span class="p">.</span><span class="na">rawBody</span><span class="p">()</span>
+      <span class="c1">// Manually parse the raw body to access the response</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <h2 id="handling-primitive-responses">Handling primitive responses</h2>
 <p>The most common format for sending data over the wire is JSON. However, not all responses need JSON objects as sometimes primitive string suffice. To support a wide variety of response types, Retrofit supports adding custom converters. One such converter is the <a href="https://github.com/square/retrofit/tree/master/retrofit-converters/scalars">Scalars Converter</a> which can handle primitive response types.</p>
@@ -528,16 +608,14 @@
  <span class="p">.</span><span class="na">baseUrl</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">)</span>
  <span class="p">.</span><span class="na">build</span><span class="p">()</span>
 </code></pre></div>
-<h2 id="status-code-and-headers-in-networkresponseunknownerror">Status code and Headers in <code>NetworkResponse.UnknownError</code></h2>
-<p>Network requests that result in a <code>NetworkResponse.UnknownError</code> can still convey useful information through their headers and status code. Unfortunately, it is not always possible to extract these values from a failed request.</p>
-<p>Therefore, the <code>NetworkResponse.UnknownError</code> class contains nullable fields for the status code and headers. These fields are populated if their values can be extract from a failed request.</p>
-<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">UnknownError</span><span class="p">(</span>
-    <span class="kd">val</span> <span class="nv">error</span><span class="p">:</span> <span class="n">Throwable</span><span class="p">,</span>
-    <span class="kd">val</span> <span class="nv">code</span><span class="p">:</span> <span class="kt">Int?</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="kd">val</span> <span class="nv">headers</span><span class="p">:</span> <span class="n">Headers? </span><span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
-<span class="p">)</span> <span class="p">:</span> <span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="n">Nothing</span><span class="p">,</span> <span class="n">Nothing</span><span class="o">&gt;</span><span class="p">()</span>
+<h2 id="raw-retrofit-responses">Raw Retrofit Responses</h2>
+<p>Responses of type <code>NetworkResponse.Success</code>, <code>NetworkResponse.ServerError</code> and <code>NetworkResponse.UnknownError</code> are bundled with the raw Retrofit <code>Response</code> object (if available). This allows you to interact with raw response in case you ever need it:</p>
+<div class="highlight"><pre><span></span><code><span class="k">when</span> <span class="p">(</span><span class="n">networkResponse</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="nv">statusCode</span> <span class="o">=</span> <span class="n">networkResponse</span><span class="p">.</span><span class="na">response</span><span class="p">.</span><span class="na">code</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
-<p>It is possible to extract this information from a failed request in most cases. However, if the server responds with a successful status code (200 &lt;= code &lt; 300) and an invalid body (which can not be parsed correctly), Retrofit assumes the network request failed. It forwards only the raised error and the original call to the registered call adapter, and thus all information about the response is lost resulting in a <code>NetworkResponse.UnknownError</code> with null <code>code</code> and <code>headers</code>.</p>
 
               
             </article>
@@ -567,13 +645,13 @@
       
       
         
-        <a href="../benefits/" class="md-footer__link md-footer__link--next" aria-label="Next: Benefits" rel="next">
+        <a href="../projects/" class="md-footer__link md-footer__link--next" aria-label="Next: Projects" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Benefits
+              Projects
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -603,10 +681,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.cefbb252.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.22074ed6.min.js"}</script>
     
     
-      <script src="../assets/javascripts/bundle.17f42bbf.min.js"></script>
+      <script src="../assets/javascripts/bundle.960e086b.min.js"></script>
       
     
   </body>

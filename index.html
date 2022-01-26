@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://haroldadmin.github.io/NetworkResponseAdapter/">
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.82f3c0b9.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.6e60f8b8.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.9204c3b2.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.e6a45f82.min.css">
         
           
           
@@ -197,6 +197,22 @@
   
   
     <li class="md-tabs__item">
+      <a href="upgrade-guides/v5/" class="md-tabs__link">
+        Upgrade Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="api/" class="md-tabs__link">
         API Reference
       </a>
@@ -332,8 +348,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits" class="md-nav__link">
+    Benefits
   </a>
   
 </li>
@@ -395,8 +418,8 @@
   
   
     <li class="md-nav__item">
-      <a href="benefits/" class="md-nav__link">
-        Benefits
+      <a href="projects/" class="md-nav__link">
+        Projects
       </a>
     </li>
   
@@ -426,12 +449,60 @@
       
       
         <label class="md-nav__link" for="__nav_2">
+          Upgrade Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Upgrade Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Upgrade Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="upgrade-guides/v5/" class="md-nav__link">
+        v5
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
           API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
+        <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -498,8 +569,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits" class="md-nav__link">
+    Benefits
   </a>
   
 </li>
@@ -539,67 +617,113 @@
 <p><a href="https://jitpack.io/#haroldadmin/NetworkResponseAdapter"><img alt="Release Version" src="https://jitpack.io/v/haroldadmin/NetworkResponseAdapter.svg" /></a>
 <a href="https://github.com/haroldadmin/networkresponseadapter/actions"><img alt="Build Status" src="https://github.com/haroldadmin/networkresponseadapter/workflows/CI/badge.svg" /></a></p>
 <h2 id="introduction">Introduction</h2>
-<p>This library provides a Retrofit call adapter to handle errors as a part of state. It helps you write cleaner code for network requests by treating errors as values, instead of exceptions.</p>
+<p>This library provides a Kotlin Coroutines based Retrofit call adapter for wrapping your API responses in
+a <code>NetworkResponse</code> type.</p>
+<p>See <a href="#installation">Installation</a> for setup instructions.</p>
 <h2 id="network-response">Network Response</h2>
-<p><code>NetworkResponse&lt;S, E&gt;</code> is a Kotlin sealed class with the following states:</p>
-<ol>
-<li>Success: Represents successful responses (2xx response codes)</li>
-<li>ServerError: Represents Server errors</li>
-<li>NetworkError: Represents connectivity errors</li>
-<li>UnknownError: Represents every other kind of error which can not be classified as an API error or a network problem (eg JSON deserialization exceptions)</li>
-</ol>
-<p>It is generic on two types: a response (<code>S</code>), and an error (<code>E</code>). The response type is your Java/Kotlin representation of the API response, while the error type represents the error response sent by the API.</p>
-<h2 id="example">Example</h2>
-<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">DetailsResponse</span><span class="p">(</span>
-  <span class="kd">val</span> <span class="nv">details</span><span class="p">:</span> <span class="kt">String</span>
-<span class="p">)</span>
+<p><code>NetworkResponse&lt;S, E&gt;</code> is a Kotlin sealed interface with the following states:</p>
+<ul>
+<li><code>Success</code>: Represents successful network calls (2xx response codes)</li>
+<li><code>Error</code>: Represents unsuccessful network calls<ul>
+<li><code>ServerError</code>: Server errors (non 2xx responses)</li>
+<li><code>NetworkError</code>: IO Errors, connectivity problems</li>
+<li><code>UnknownError</code>: Any other errors, like serialization exceptions</li>
+</ul>
+</li>
+</ul>
+<p>It is generic on two types: a success response (<code>S</code>), and an error response (<code>E</code>).</p>
+<ul>
+<li><code>S</code>: Kotlin representation of a successful API response</li>
+<li><code>E</code>: Representation of an unsuccessful API response</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>Suppose an API returns the following body for a successful response:</p>
+<p><em>Successful Response</em></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John doe&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>And this for an unsuccessful response:</p>
+<p><em>Error Response</em></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The requested person was not found&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>You can create two data classes to model the these responses:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">PersonResponse</span><span class="p">(</span><span class="kd">val</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kd">val</span> <span class="nv">age</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span>
 
-<span class="kd">data</span> <span class="kd">class</span> <span class="nc">DetailsError</span><span class="p">(</span>
-  <span class="kd">val</span> <span class="nv">errorMessage</span><span class="p">:</span> <span class="kt">String</span>
-<span class="p">)</span>
+<span class="kd">data</span> <span class="kd">class</span> <span class="nc">ErrorResponse</span><span class="p">(</span><span class="kd">val</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span>
+</code></pre></div>
+<p>Then modify your Retrofit service to return a <code>NetworkResponse</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@GET</span><span class="p">(</span><span class="s">&quot;/person&quot;</span><span class="p">)</span>
+<span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">getPerson</span><span class="p">():</span> <span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="n">PersonResponse</span><span class="p">,</span> <span class="n">ErrorResponse</span><span class="o">&gt;&gt;</span>
 
-<span class="kd">interface</span> <span class="nc">Api</span> <span class="p">{</span>
-  <span class="nd">@Get</span><span class="p">(</span><span class="s">&quot;/details&quot;</span><span class="p">)</span>
-  <span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">details</span><span class="p">():</span> <span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="n">DetailsResponse</span><span class="p">,</span> <span class="n">DetailsError</span><span class="o">&gt;</span>
-<span class="p">}</span>
-
-<span class="kd">class</span> <span class="nc">ViewModel</span> <span class="p">{</span>
-  <span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">fetchDetails</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">when</span> <span class="p">(</span><span class="kd">val</span> <span class="nv">response</span> <span class="o">=</span> <span class="n">api</span><span class="p">.</span><span class="na">details</span><span class="p">())</span> <span class="p">{</span>
-      <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="n">handleSuccess</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="na">body</span><span class="p">)</span>
-      <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">ServerError</span> <span class="o">-&gt;</span> <span class="n">handleServerError</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="na">code</span><span class="p">)</span>
-      <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">NetworkError</span> <span class="o">-&gt;</span> <span class="n">handleNetworkError</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="na">error</span><span class="p">)</span>
-      <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">UnknownError</span> <span class="o">-&gt;</span> <span class="n">handleUnknownError</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="na">error</span><span class="p">)</span>
+<span class="c1">// You can also request for `Deferred` responses</span>
+<span class="nd">@GET</span><span class="p">(</span><span class="s">&quot;/person&quot;</span><span class="p">)</span>
+<span class="kd">fun</span> <span class="nf">getPersonAsync</span><span class="p">():</span> <span class="n">Deferred</span><span class="o">&lt;</span><span class="n">NetworkResponse</span><span class="o">&lt;</span><span class="n">PersonResponse</span><span class="p">,</span> <span class="n">ErrorResponse</span><span class="o">&gt;&gt;</span>
+</code></pre></div>
+<p>Finally, add this call adapter factory to your Retrofit instance:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Retrofit</span><span class="p">.</span><span class="na">Builder</span><span class="p">()</span>
+    <span class="p">.</span><span class="na">addCallAdapterFactory</span><span class="p">(</span><span class="n">NetworkResponseAdapterFactory</span><span class="p">())</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">()</span>
+</code></pre></div>
+<p>And voila! You can now consume your API as:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Repository.kt</span>
+<span class="kd">suspend</span> <span class="kd">fun</span> <span class="nf">getPerson</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">when</span> <span class="p">(</span><span class="kd">val</span> <span class="nv">person</span> <span class="o">=</span> <span class="n">apiService</span><span class="p">.</span><span class="na">getPerson</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* Successful response */</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* Handle error */</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-  <span class="p">}</span>
+
+    <span class="c1">// Or, if you care about the type of the error:</span>
+    <span class="k">when</span> <span class="p">(</span><span class="kd">val</span> <span class="nv">person</span> <span class="o">=</span> <span class="n">apiService</span><span class="p">.</span><span class="na">getPerson</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* ... */</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">ServerError</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* ... */</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">NetworkError</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* ... */</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">NetworkResponse</span><span class="p">.</span><span class="na">UnknownError</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="cm">/* ... */</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
+<p>See <a href="special-cases/">Special Cases</a> for dealing with more complicated scenarios.</p>
+<h2 id="benefits">Benefits</h2>
+<p>Modelling errors as a part of your state is a recommended practice. This library helps you deal with scenarios where you can successfully recover from errors, and extract meaningful information from them too!</p>
+<ul>
+<li><code>NetworkResponseAdapter</code> provides a much cleaner solution than Retrofit's built in <code>Call</code> type for dealing with errors.<code>Call</code> throws an exception on any kind of an error, leaving it up to you to catch it and parse it manually to figure out what went wrong. <code>NetworkResponseAdapter</code> does all of that for you and returns the result in an easily consumable <code>NetworkResponse</code> subtype.</li>
+</ul>
+<ul>
+<li>The RxJava retrofit adapter treats non 2xx response codes as errors, which seems silly in the context of Rx where errors terminate streams. Also, just like the <code>Call&lt;T&gt;</code> type, it makes you deal with all types of errors in an <code>onError</code> callback, where you have to manually parse it to find out exactly what went wrong.</li>
+</ul>
+<ul>
+<li>Using the <code>Response</code> class provided by Retrofit is cumbersome, as you have to manually parse error bodies with it.</li>
+</ul>
 <h2 id="installation">Installation</h2>
 <p>Add the Jitpack repository to your list of repositories:</p>
 <div class="highlight"><pre><span></span><code><span class="n">allprojects</span> <span class="o">{</span>
-  <span class="n">repositories</span> <span class="o">{</span>
-    <span class="n">maven</span> <span class="o">{</span> <span class="n">url</span> <span class="s1">&#39;https://jitpack.io&#39;</span> <span class="o">}</span>
-  <span class="o">}</span>
+    <span class="n">repositories</span> <span class="o">{</span>
+        <span class="n">maven</span> <span class="o">{</span> <span class="n">url</span> <span class="s1">&#39;https://jitpack.io&#39;</span> <span class="o">}</span>
+    <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
-<p>Then add the dependency in your gradle file:</p>
+<p>And then add the dependency in your gradle file:</p>
 <div class="highlight"><pre><span></span><code><span class="n">dependencies</span> <span class="o">{</span>
-  <span class="n">implementation</span> <span class="s2">&quot;com.github.haroldadmin:NetworkResponseAdapter:(latest-version)&quot;</span>
+    <span class="n">implementation</span> <span class="s2">&quot;com.github.haroldadmin:NetworkResponseAdapter:(latest-version)&quot;</span>
 <span class="o">}</span>
 </code></pre></div>
-<p>And finally, register <code>NetworkResponseAdapter</code> with Retrofit:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">val</span> <span class="nv">retrofit</span> <span class="o">=</span> <span class="n">Retrofit</span><span class="p">.</span><span class="na">Builder</span><span class="p">()</span>
- <span class="p">.</span><span class="na">addCallAdapterFactory</span><span class="p">(</span><span class="n">NetworkResponseAdapterFactory</span><span class="p">())</span>
- <span class="p">...</span> <span class="c1">// Other config</span>
- <span class="p">.</span><span class="na">build</span><span class="p">()</span>
-</code></pre></div>
-<!-- prettier-ignore-start -->
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This library uses OkHttp 4, which requires Android API version 21+ and Java 8+.</p>
-</div>
-<!-- prettier-ignore-end -->
-
+<p><a href="https://jitpack.io/#haroldadmin/NetworkResponseAdapter"><img alt="Release" src="https://jitpack.io/v/haroldadmin/NetworkResponseAdapter.svg" /></a></p>
+<p><em>This library uses OkHttp 4, which requires Android API version 21+ and Java 8+</em></p>
 <h2 id="license">License</h2>
 <div class="highlight"><pre><span></span><code>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -663,10 +787,10 @@ limitations under the License.
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.cefbb252.min.js"}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.22074ed6.min.js"}</script>
     
     
-      <script src="assets/javascripts/bundle.17f42bbf.min.js"></script>
+      <script src="assets/javascripts/bundle.960e086b.min.js"></script>
       
     
   </body>

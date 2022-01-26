@@ -24,9 +24,12 @@ $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/code/#/Pointi
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/headers/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/headers.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.Success/response/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-success/response.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/index.md
-$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/UnknownError/#kotlin.Throwable/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/-unknown-error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/UnknownError/#kotlin.Throwable#retrofit2.Response[*]?/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/-unknown-error.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/body/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/body.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/code/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/code.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/error/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/error.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/headers/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/headers.md
+$dokka.location:com.haroldadmin.cnradapter/NetworkResponse.UnknownError/response/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/-unknown-error/response.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponse///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/index.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponseAdapterFactory///PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response-adapter-factory/index.md
 $dokka.location:com.haroldadmin.cnradapter/NetworkResponseAdapterFactory/NetworkResponseAdapterFactory/#/PointingToDeclaration/-network-response-adapter/com.haroldadmin.cnradapter/-network-response-adapter-factory/-network-response-adapter-factory.md

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://haroldadmin.github.io/NetworkResponseAdapter/api/-network-response-adapter/com.haroldadmin.cnradapter/-network-response/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.82f3c0b9.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.6e60f8b8.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.9204c3b2.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
         
           
           
@@ -195,6 +195,22 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../../../upgrade-guides/v5/" class="md-tabs__link">
+        Upgrade Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../../" class="md-tabs__link">
         API Reference
       </a>
@@ -322,8 +338,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../benefits/" class="md-nav__link">
-        Benefits
+      <a href="../../../../projects/" class="md-nav__link">
+        Projects
       </a>
     </li>
   
@@ -353,12 +369,60 @@
       
       
         <label class="md-nav__link" for="__nav_2">
+          Upgrade Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Upgrade Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Upgrade Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../upgrade-guides/v5/" class="md-nav__link">
+        v5
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
           API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
+        <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -458,9 +522,15 @@ interface <a href="./">NetworkResponse</a>&lt;<a href="./">S</a>, <a href="./">E
 <p>If the network request was successful and Retrofit successfully deserialized the body, the <a href="./">NetworkResponse</a> is <a href="-success/">NetworkResponse.Success</a>. If you do not expect a successful response to contain a body, you must specify <a href="./">S</a> as <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> or use <a href="../#1950437047%2FClasslikes%2F-1216412040">CompletableResponse</a>.</p>
 <p>If the network request failed due to:</p>
 <ul>
-<li>Non-2xx response from the server, the <a href="./">NetworkResponse</a> is <a href="-server-error/">NetworkResponse.ServerError</a> containing the deserialized body of the response (<a href="./">E</a>)</li>
-<li>Internet connectivity problems, the <a href="./">NetworkResponse</a> is <a href="-network-error/">NetworkResponse.NetworkError</a></li>
-<li>Any other problems (e.g. Serialization errors), the <a href="./">NetworkResponse</a> is <a href="-unknown-error/">NetworkResponse.UnknownError</a>.</li>
+<li>
+<p>Non-2xx response from the server, the <a href="./">NetworkResponse</a> is <a href="-server-error/">NetworkResponse.ServerError</a> containing the deserialized body of the response (<a href="./">E</a>)</p>
+</li>
+<li>
+<p>Internet connectivity problems, the <a href="./">NetworkResponse</a> is <a href="-network-error/">NetworkResponse.NetworkError</a></p>
+</li>
+<li>
+<p>Any other problems (e.g. Serialization errors), the <a href="./">NetworkResponse</a> is <a href="-unknown-error/">NetworkResponse.UnknownError</a>.</p>
+</li>
 </ul>
 <h2 id="types">Types</h2>
 <table>
@@ -489,7 +559,7 @@ interface <a href="./">NetworkResponse</a>&lt;<a href="./">S</a>, <a href="./">E
 </tr>
 <tr>
 <td><a href="-unknown-error/">UnknownError</a></td>
-<td>[jvm]<br>data class <a href="-unknown-error/">UnknownError</a>&lt;<a href="-unknown-error/">S</a>, <a href="-unknown-error/">E</a>&gt;(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>) : <a href="-error/">NetworkResponse.Error</a>&lt;<a href="-unknown-error/">S</a>, <a href="-unknown-error/">E</a>&gt; <br>Result of an unknown error during a network request (e.g. Serialization errors)</td>
+<td>[jvm]<br>data class <a href="-unknown-error/">UnknownError</a>&lt;<a href="-unknown-error/">S</a>, <a href="-unknown-error/">E</a>&gt;(error: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a>, response: Response&lt;*&gt;?) : <a href="-error/">NetworkResponse.Error</a>&lt;<a href="-unknown-error/">S</a>, <a href="-unknown-error/">E</a>&gt; <br>Result of an unknown error during a network request (e.g. Serialization errors)</td>
 </tr>
 </tbody>
 </table>
@@ -554,10 +624,10 @@ interface <a href="./">NetworkResponse</a>&lt;<a href="./">S</a>, <a href="./">E
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.cefbb252.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.17f42bbf.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.960e086b.min.js"></script>
       
     
   </body>
