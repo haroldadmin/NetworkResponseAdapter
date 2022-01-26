@@ -2,16 +2,12 @@
 
 [![Build Status](https://github.com/haroldadmin/networkresponseadapter/workflows/CI/badge.svg)](https://github.com/haroldadmin/networkresponseadapter/actions)
 
-A call adapter that handles errors as a part of state
+This library provides a Kotlin Coroutines based Retrofit call adapter for wrapping your API responses in
+a `NetworkResponse` sealed type.
 
 ## Documentation
 
 [**https://haroldadmin.github.io/NetworkResponseAdapter**](https://haroldadmin.github.io/NetworkResponseAdapter)
-
----
-
-This library provides a Kotlin Coroutines based Retrofit call adapter for wrapping your API responses in
-a `NetworkResponse` type.
 
 ## Network Response
 
