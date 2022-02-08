@@ -2,6 +2,7 @@
 
 [![Release Version](https://jitpack.io/v/haroldadmin/NetworkResponseAdapter.svg)](https://jitpack.io/#haroldadmin/NetworkResponseAdapter)
 [![Build Status](https://github.com/haroldadmin/networkresponseadapter/workflows/CI/badge.svg)](https://github.com/haroldadmin/networkresponseadapter/actions)
+![Downloads](https://img.shields.io/endpoint?color=%2364c462&url=https%3A%2F%2Fshields-io-jitpack.haroldadmin.workers.dev%2Fmonth)
 
 ## Introduction
 
