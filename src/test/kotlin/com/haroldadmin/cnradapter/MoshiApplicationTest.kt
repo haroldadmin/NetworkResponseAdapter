@@ -90,7 +90,7 @@ internal class TestApplication(
     }
 }
 
-class MoshiApplicationTest : DescribeSpec({
+public class MoshiApplicationTest : DescribeSpec({
     val server = MockWebServer()
 
     val moshi = Moshi.Builder()
@@ -128,7 +128,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
         val response = app.getLaunch(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.OK<Launch>>()
         response.body.name shouldContain "FalconSat"
         response.code shouldBe 200
     }
@@ -143,7 +143,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
         val response = app.getLaunch(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
         response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
@@ -161,7 +161,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -177,7 +177,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
         val response = app.getLaunchWithFailure(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -192,7 +192,7 @@ class MoshiApplicationTest : DescribeSpec({
         )
 
         val response = app.getLaunchWithFailure(invalidFlightNumber)
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -208,7 +208,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsync(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.OK<Launch>>()
         response.body.name shouldContain "FalconSat"
         response.code shouldBe 200
     }
@@ -225,7 +225,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsync(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.ServerError<Launch, GenericErrorResponse>>()
+        response.shouldBeInstanceOf<NetworkResponse.ServerError<GenericErrorResponse>>()
         response.body?.error shouldContain "Not Found"
         response.code shouldBe 404
     }
@@ -242,7 +242,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsyncInvalid(validFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError<LaunchInvalid, GenericErrorResponseInvalid>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
@@ -258,11 +258,11 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.getLaunchAsyncInvalid(invalidFlightNumber)
 
-        response.shouldBeInstanceOf<NetworkResponse.UnknownError<*, *>>()
+        response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         response.error.shouldBeInstanceOf<JsonDataException>()
     }
 
-    it("should parse empty body as Unit") {
+    it("should parse empty body as NoContent") {
         val app = TestApplication(service)
 
         server.enqueue(
@@ -273,12 +273,11 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.healthCheck()
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Unit, GenericErrorResponse>>()
-        response.body shouldBe Unit
+        response.shouldBeInstanceOf<NetworkResponse.NoContent>()
         response.code shouldBe 204
     }
 
-    it("should parse empty body as Unit for deferred methods too") {
+    it("should parse empty body as NoContent for deferred methods too") {
         val app = TestApplication(service)
 
         server.enqueue(
@@ -289,8 +288,7 @@ class MoshiApplicationTest : DescribeSpec({
 
         val response = app.deferredHealthCheck()
 
-        response.shouldBeInstanceOf<NetworkResponse.Success<Unit, GenericErrorResponse>>()
-        response.body shouldBe Unit
+        response.shouldBeInstanceOf<NetworkResponse.NoContent>()
         response.code shouldBe 204
     }
 })

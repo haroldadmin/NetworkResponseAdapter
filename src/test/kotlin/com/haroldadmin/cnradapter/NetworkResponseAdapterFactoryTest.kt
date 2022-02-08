@@ -9,7 +9,7 @@ import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.Retrofit
 
-class NetworkResponseAdapterFactoryTest : DescribeSpec({
+public class NetworkResponseAdapterFactoryTest : DescribeSpec({
     describe(NetworkResponseAdapterFactory::class.java.simpleName) {
         it("should return null for non NetworkResponse return types") {
             val factory = NetworkResponseAdapterFactory()

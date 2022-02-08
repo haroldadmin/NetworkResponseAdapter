@@ -12,12 +12,13 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.*
 import java.io.IOException
 
-class NetworkResponseCallTest : DescribeSpec({
+public class NetworkResponseCallTest : DescribeSpec({
     describe(NetworkResponseCall::class.java.simpleName) {
         it("should return a response asynchronously when using 'enqueue'") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
             val completable = CompletableDeferred<NetworkResponse<String, String>>()
 
             networkResponseCall.enqueue(object : Callback<NetworkResponse<String, String>> {
@@ -41,20 +42,21 @@ class NetworkResponseCallTest : DescribeSpec({
             retrofitCall.complete("Test Message")
 
             val networkResponse = completable.await()
-            networkResponse.shouldBeTypeOf<NetworkResponse.Success<String, String>>()
+            networkResponse.shouldBeTypeOf<NetworkResponse.OK<String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
         it("should return a response synchronously when using `execute`") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.complete("Test Message")
             val response = networkResponseCall.awaitResponse()
 
             response.isSuccessful shouldBe true
-            response.body().shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.body().shouldBeInstanceOf<NetworkResponse.Success<String>>()
 
             val networkResponse = response.body() as NetworkResponse.Success
             networkResponse.body shouldBe "Test Message"
@@ -63,7 +65,8 @@ class NetworkResponseCallTest : DescribeSpec({
         it("should cancel backing call when cancelled") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             networkResponseCall.isCanceled shouldBe false
 
@@ -75,20 +78,22 @@ class NetworkResponseCallTest : DescribeSpec({
         it("should parse a successful response as NetworkResponse.Success") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.complete("Test Message")
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.Success<String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
         it("should parse an HTTPException as NetworkResponse.ServerError") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.completeWithException(
                 HttpException(
@@ -101,32 +106,34 @@ class NetworkResponseCallTest : DescribeSpec({
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.ServerError<String>>()
             networkResponse.body shouldBe "Test Message"
         }
 
         it("should parse an IOException as NetworkResponse.NetworkError") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.completeWithException(IOException())
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.NetworkError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.NetworkError>()
         }
 
         it("should parse an unknown exception as NetworkResponse.UnknownError") {
             val errorConverter = Converter<ResponseBody, String> { it.string() }
             val retrofitCall = CompletableCall<String>()
-            val networkResponseCall = NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
+            val networkResponseCall =
+                NetworkResponseCall(retrofitCall, errorConverter, String::class.java)
 
             retrofitCall.completeWithException(Exception())
             val networkResponse = networkResponseCall.awaitResponse().body()
 
             networkResponse shouldNotBe null
-            networkResponse.shouldBeInstanceOf<NetworkResponse.UnknownError<String, String>>()
+            networkResponse.shouldBeInstanceOf<NetworkResponse.UnknownError>()
         }
     }
 })
