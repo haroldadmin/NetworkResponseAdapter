@@ -607,6 +607,31 @@
 <li>Removal of deprecated <code>CoroutinesNetworkResponseAdapterFactory</code> and <code>CoroutinesNetworkResponseAdapter</code> classes.</li>
 </ul>
 <p>These classes had been deprecated for a very long time. v5 removes them from the codebase. If you're still using them, please move to <code>NetworkResponseAdapterFactory</code> and <code>NetworkResponseAdapter</code> classes as a replacement.</p>
+<ul>
+<li>The constructors for <code>NetworkResponse</code> subclasses have changed (<a href="https://github.com/haroldadmin/NetworkResponseAdapter/issues/59">#59</a>)</li>
+</ul>
+<p><code>NetworkResponse.Success</code>, <code>NetworkResponse.ServerError</code> and <code>NetworkResponse.UnknownError</code> no longer accept status code, headers or body as constructor parameters. Instead, you must supply a correctly configured instance of a Retrofit <code>Response</code>.</p>
+<p>Here's an example with Mockito:</p>
+<p>In v4:</p>
+<div class="highlight"><pre><span></span><code>whenever(apiService.signOut(any()))
+    .thenReturn(NetworkResponse.Success(code = 200, body = Unit))
+</code></pre></div>
+<p>In v5:</p>
+<div class="highlight"><pre><span></span><code>// NetworkResponse.Success
+whenever(apiService.signOut(any()))
+    .thenReturn(NetworkResponse.Success(response = Response.success(200), body = Unit))
+
+// NetworkResponse.Error
+val errorResponse = Response.error&lt;String&gt;(
+    500,
+    &quot;{\&quot;error\&quot;: \&quot;boom\&quot;}&quot;
+        .toResponseBody(&quot;application/json&quot;)
+        .toMediaTypeOrNull(),
+)
+
+whenever(apiService.signOut(any()))
+    .thenReturn(NetworkResponse.ServerError(response = errorResponse, body = ErrorResponse(&quot;boom&quot;)))
+</code></pre></div>
 <h3 id="backward-compatible-non-breaking">Backward Compatible (Non-Breaking)</h3>
 <ul>
 <li>Migration to a sealed interface for the <code>NetworkResponse</code> type</li>
