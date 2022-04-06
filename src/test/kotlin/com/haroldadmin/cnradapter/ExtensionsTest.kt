@@ -15,28 +15,28 @@ import retrofit2.http.GET
 import java.io.IOException
 import java.time.Duration
 
-class ExtensionsTest : DescribeSpec({
+public class ExtensionsTest : DescribeSpec({
     context("Overloaded Invoke Operator") {
         it("should return the underlying body for NetworkResponse.Success") {
-            val response = NetworkResponse.Success<String, String>("Test Message", Response.success("Test Message"))
+            val response = NetworkResponse.OK("Test Message", Response.success("Test Message"))
             val body = response()
             body shouldBe "Test Message"
         }
 
         it("should return null for NetworkResponse.ServerError") {
-            val response = NetworkResponse.ServerError<String, String>(null, null)
+            val response = NetworkResponse.ServerError(null, null)
             val body = response()
             body shouldBe null
         }
 
         it("should return null for NetworkResponse.NetworkError") {
-            val response = NetworkResponse.NetworkError<String, String>(IOException())
+            val response = NetworkResponse.NetworkError(IOException())
             val body = response()
             body shouldBe null
         }
 
         it("should return null for NetworkResponse.UnknownError") {
-            val response = NetworkResponse.UnknownError<String, String>(Exception(), null)
+            val response = NetworkResponse.UnknownError(Exception(), null)
             val body = response()
             body shouldBe null
         }
@@ -77,7 +77,7 @@ class ExtensionsTest : DescribeSpec({
                 service.getTextAsync().await()
             }
 
-            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
             response.body shouldBe "Hi!"
         }
 
@@ -92,7 +92,7 @@ class ExtensionsTest : DescribeSpec({
                 service.getText()
             }
 
-            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.Success<String>>()
             response.body shouldBe "Hi!"
         }
     }
