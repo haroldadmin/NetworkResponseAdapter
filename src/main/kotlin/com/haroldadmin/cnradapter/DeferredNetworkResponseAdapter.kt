@@ -18,7 +18,7 @@ import java.lang.reflect.Type
  */
 internal class DeferredNetworkResponseAdapter<S, E>(
     private val successType: Type,
-    private val errorConverter: Converter<ResponseBody, E>,
+    private val errorConverter: Converter<ResponseBody, E>
 ) : CallAdapter<S, Deferred<NetworkResponse<S, E>>> {
     override fun responseType(): Type {
         return successType

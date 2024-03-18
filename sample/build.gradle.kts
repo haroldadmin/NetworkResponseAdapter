@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
-    kotlin("plugin.serialization") version "1.5.31"
+    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.serialization)
 }
 
 group = "com.haroldadmin"
@@ -20,11 +20,11 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
     implementation(project(":"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+    implementation(libs.serialization.json)
+    implementation(libs.serialization.converter)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation(libs.jupiter.api)
+    testRuntimeOnly(libs.jupiter.engine)
 }
 
 tasks.getByName<Test>("test") {

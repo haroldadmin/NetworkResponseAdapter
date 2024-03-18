@@ -83,7 +83,7 @@ public sealed interface NetworkResponse<S, E> {
      */
     public data class ServerError<S, E>(
         public override val body: E?,
-        public val response: Response<*>?,
+        public val response: Response<*>?
     ) : Error<S, E> {
         /**
          * The status code returned by the server.
@@ -109,7 +109,7 @@ public sealed interface NetworkResponse<S, E> {
      * The result of a network connectivity error
      */
     public data class NetworkError<S, E>(
-        public override val error: IOException,
+        public override val error: IOException
     ) : Error<S, E> {
 
         /**

@@ -1,9 +1,9 @@
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
-    kotlin("jvm") version "1.6.0"
-    id("org.jetbrains.dokka") version "1.6.0"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
     `maven-publish`
 }
 
@@ -25,7 +25,7 @@ val test by tasks.getting(Test::class) {
 }
 
 configure<KtlintExtension> {
-    version.set("0.43.0")
+    version.set("0.47.1")
     ignoreFailures.set(false)
     disabledRules.set(setOf("no-wildcard-imports"))
 }
@@ -43,22 +43,18 @@ publishing {
 }
 
 dependencies {
-    val coroutinesVersion = "1.5.2"
-    val retrofitVersion = "2.9.0"
-    val okHttpVersion = "4.9.3"
-    val kotestVersion = "5.0.1"
 
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    api("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    api("com.squareup.okhttp3:okhttp:$okHttpVersion")
+    api(libs.coroutines)
+    api(libs.retrofit)
+    api(libs.okhttp)
+    api(libs.okio)
 
-    testImplementation("com.squareup.okhttp3:mockwebserver:$okHttpVersion")
-    testImplementation("com.google.guava:guava:31.0.1-jre")
-    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    testImplementation("com.squareup.moshi:moshi-kotlin:1.12.0")
-    testImplementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    testImplementation(libs.okhttp.mock.webserver)
+    testImplementation(libs.guava)
+    testImplementation(libs.kotest.runner)
+    testImplementation(libs.kotest.assertion)
+    testImplementation(libs.moshi)
+    testImplementation(libs.retrofit.converter.moshi)
 }
 
 tasks.dokkaGfm.configure {

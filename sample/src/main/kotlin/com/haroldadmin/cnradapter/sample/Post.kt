@@ -1,6 +1,5 @@
 package com.haroldadmin.cnradapter.sample
 
-import com.haroldadmin.cnradapter.CompletableResponse
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.serialization.Serializable
 import retrofit2.http.Body

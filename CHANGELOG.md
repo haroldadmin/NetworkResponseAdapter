@@ -1,5 +1,16 @@
 # Changelog
 
+## (Upcoming)
+
+**Kotlin 1.9.23**
+
+- Updated the language level to 1.9.23
+- Minor source changes to satisfy _ktlint_
+- Minor changes due to new language level and library versions
+
+**Version Catalogs**
+- Adopted _version catalog_ dependency management.
+
 ## Version 5.0.0 (6 March, 2022)
 
 A new stable release for your favourite Retrofit call adapter. v5 is a culmination of a lot of community contributions and an overhaul of the internals of the library.
