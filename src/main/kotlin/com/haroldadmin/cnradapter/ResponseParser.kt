@@ -85,7 +85,7 @@ private fun <S, E> parseSuccessfulResponse(response: Response<S>, successType: T
  */
 internal fun <S, E> Throwable.asNetworkResponse(
     successType: Type,
-    errorConverter: Converter<ResponseBody, E>,
+    errorConverter: Converter<ResponseBody, E>
 ): NetworkResponse<S, E> {
     return when (this) {
         is IOException -> NetworkResponse.NetworkError(this)
