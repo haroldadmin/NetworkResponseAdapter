@@ -1,11 +1,6 @@
 package com.haroldadmin.cnradapter
 
-import com.haroldadmin.cnradapter.utils.CompletableCall
-import com.haroldadmin.cnradapter.utils.CrashObjectConversionError
-import com.haroldadmin.cnradapter.utils.CrashyObject
-import com.haroldadmin.cnradapter.utils.CrashyObjectConverterFactory
-import com.haroldadmin.cnradapter.utils.StringConverterFactory
-import com.haroldadmin.cnradapter.utils.typeOf
+import com.haroldadmin.cnradapter.utils.*
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -21,7 +16,7 @@ import retrofit2.http.GET
 import java.io.IOException
 import java.time.Duration
 
-class NetworkResponseAdapterTest : DescribeSpec({
+public class NetworkResponseAdapterTest : DescribeSpec({
     describe(NetworkResponseAdapter::class.java.simpleName) {
         it("should return success type correctly") {
             val converterFactory = StringConverterFactory()
@@ -92,7 +87,7 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.OK<String>>()
             response.body shouldBe "Test Message"
         }
 
@@ -105,20 +100,19 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.ServerError<String>>()
             response.body shouldBe "Not Found"
         }
 
         it("should handle 200 (with body) and 204 (no body) responses correctly") {
             server.enqueue(MockResponse().setBody("Test Message").setResponseCode(200))
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.Success<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.OK<String>>()
             response.body shouldBe "Test Message"
 
             server.enqueue(MockResponse().setResponseCode(204))
             val noBodyResponse = service.getText()
-            noBodyResponse.shouldBeInstanceOf<NetworkResponse.ServerError<String, String>>()
-            noBodyResponse.body shouldBe null
+            noBodyResponse.shouldBeInstanceOf<NetworkResponse.NoContent>()
         }
 
         it("should return network error response as NetworkResponse.NetworkError") {
@@ -127,7 +121,7 @@ class NetworkResponseAdapterTest : DescribeSpec({
             )
 
             val response = service.getText()
-            response.shouldBeInstanceOf<NetworkResponse.NetworkError<String, String>>()
+            response.shouldBeInstanceOf<NetworkResponse.NetworkError>()
             response.error.shouldBeInstanceOf<IOException>()
         }
 
@@ -135,7 +129,7 @@ class NetworkResponseAdapterTest : DescribeSpec({
             server.enqueue(MockResponse().setBody("Ignore").setResponseCode(200))
 
             val response = service.getCrashyObject()
-            response.shouldBeInstanceOf<NetworkResponse.UnknownError<*, *>>()
+            response.shouldBeInstanceOf<NetworkResponse.UnknownError>()
             response.error.shouldBeInstanceOf<CrashObjectConversionError>()
         }
     }

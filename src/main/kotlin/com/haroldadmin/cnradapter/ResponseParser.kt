@@ -21,7 +21,7 @@ internal fun <S, E> Response<S>.asNetworkResponse(
     return if (!isSuccessful) {
         parseUnsuccessfulResponse(this, errorConverter)
     } else {
-        parseSuccessfulResponse(this, successType)
+        parseSuccessfulResponse(this)
     }
 }
 
@@ -41,8 +41,9 @@ internal fun <S, E> Response<S>.asNetworkResponse(
 private fun <S, E> parseUnsuccessfulResponse(
     response: Response<S>,
     errorConverter: Converter<ResponseBody, E>
-): NetworkResponse.Error<S, E> {
-    val errorBody: ResponseBody = response.errorBody() ?: return NetworkResponse.ServerError(null, response)
+): NetworkResponse.Error<E> {
+    val errorBody: ResponseBody =
+        response.errorBody() ?: return NetworkResponse.ServerError(null, response)
 
     return try {
         val convertedBody = errorConverter.convert(errorBody)
@@ -62,18 +63,14 @@ private fun <S, E> parseUnsuccessfulResponse(
  *      - Else return a [NetworkResponse.ServerError] with a null body
  * - If response body is not null, return [NetworkResponse.Success] with the parsed body
  */
-private fun <S, E> parseSuccessfulResponse(response: Response<S>, successType: Type): NetworkResponse<S, E> {
-    val responseBody: S? = response.body()
-    if (responseBody == null) {
-        if (successType === Unit::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return NetworkResponse.Success<Unit, E>(Unit, response) as NetworkResponse<S, E>
+private fun <S, E> parseSuccessfulResponse(response: Response<S>): NetworkResponse<S, E> {
+    return when (val responseBody: S? = response.body()) {
+        null -> when (response.code()) {
+            204 -> NetworkResponse.NoContent(response)
+            else -> NetworkResponse.ServerError(null, response)
         }
-
-        return NetworkResponse.ServerError(null, response)
+        else -> NetworkResponse.OK(responseBody, response)
     }
-
-    return NetworkResponse.Success(responseBody, response)
 }
 
 /**
