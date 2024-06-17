@@ -12,8 +12,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
-val url = "https://jsonplaceholder.typicode.com"
-val contentType = "application/json".toMediaType()
+private const val url = "https://jsonplaceholder.typicode.com"
+private val contentType = "application/json".toMediaType()
 
 val loggingInterceptor = { chain: Interceptor.Chain ->
     val method = chain.request().method
@@ -24,7 +24,6 @@ val loggingInterceptor = { chain: Interceptor.Chain ->
 
 val okHttp = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
 
-@OptIn(ExperimentalSerializationApi::class)
 val retrofit: Retrofit = Retrofit.Builder()
     .baseUrl(url)
     .addCallAdapterFactory(NetworkResponseAdapterFactory())
